@@ -14,21 +14,23 @@
     "node": "20.14.0"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.7",
-    "dotenv": "^16.4.5",
     "express": "^4.21.2",
-    "express-fileupload": "^1.5.0",
+    "express-fileupload": "^1.5.2",
     "express-session": "^1.18.2",
     "hbs": "^4.2.0",
-    "mongodb": "^6.8.0",
-    "mongoose": "^8.5.0",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.4",
     "mongoose-sequence": "^6.0.1",
     "multer": "^1.4.5-lts.1",
     "multiparty": "^4.2.3",
     "path": "^0.12.7"
   },
   "description": "This web application allows users to reserve slots in a computer laboratory. Users can view available slots, make reservations, and manage their reservations. Lab technicians have additional functionalities to manage all reservations and user profiles.",
-  "devDependencies": {}
+  "devDependencies": {
+    "dotenv": "^17.2.0"
+  }
 }
