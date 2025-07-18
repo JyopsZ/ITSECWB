@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>View Slot Availability</title>
+        <link rel="stylesheet" href="../css/styles.css">
+    </head>
+
+    <body>
+        <header>
+            <img src="../images/logo.png" id="logo">
+            <h1>Reserve Slot</h1>
+            <nav>
+                <ul>
+                    <li><a href="../../labtechPage">Home</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="reservation-form">
+                <h1>Available Seats</h1>
+                <h3>July 13</h3>
+                <form id="reserveForm">
+                    <!-- Time Slot 1 -->
+                    <div class="time-slot">
+                        <label>
+                            <input type="radio" name="timeSlot" value="9:00 AM - 10:00 AM">
+                            <h2>9:00 AM - 9:30 AM</h2>
+                            <p>20 slots available</p>
+                        </label>
+                    </div>
+                    
+                    <!-- Time Slot 2 -->
+                    <div class="time-slot">
+                        <label>
+                            <input type="radio" name="timeSlot" value="10:00 AM - 11:00 AM">
+                            <h2>9:30 AM AM - 10:00 AM</h2>
+                            <p>14 slots available</p>
+                        </label>
+                    </div>
+                    
+                    <!-- Time Slot 3 -->
+                    <div class="time-slot">
+                        <label>
+                            <input type="radio" name="timeSlot" value="11:00 AM - 12:00 PM">
+                            <h2>10:00 AM - 10:30 AM</h2>
+                            <p>25 slots available</p>
+                        </label>
+                    </div>
+                    
+                    <button type="submit">Reserve Slot</button>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 LabLink. All rights reserved.</p>
+        </footer>
+
+        <script>
+        
+        var url_string = window.location;
+        var url = new URL(url_string);
+        var lab = url.searchParams.get("lab");
+
+        const reserve = document.getElementById('reserveForm');
+
+        reserve.addEventListener('submit', function (event) {
+
+            event.preventDefault();
+
+            if (lab === 'lab1') {
+                
+                window.location.href = 'lab1';
+            } 
+                    
+            else if (lab === 'lab2') {
+                
+                window.location.href = 'lab2';
+            }
+
+            else {
+
+                window.location.href = 'lab3';
+            }
+        });
+            
+        </script>
+    </body>
+</html>

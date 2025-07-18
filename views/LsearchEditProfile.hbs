@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search/View Students Profile - LabTech</title>
+    <link rel="stylesheet" href="../css/styles.css">
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Edit Profile</h1>
+        <nav>
+            <ul>
+                <li><a href="../labtechView/LSubProfile">Back</a></li>
+                <li><a href="labtechPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="section-container">
+            <section class="search-form">
+                <h2>Search for User</h2>
+                <form action="/findUser2" method="POST">
+                    <!-- User Search -->
+                    Enter Name to Find User:
+                    <input type="text" name="userName" required>
+                    <button type="submit">Find User</button>
+                </form>
+            </section>
+        </div>
+    </main>
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+</body>
+</html>

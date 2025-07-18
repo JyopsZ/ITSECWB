@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Reservation</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Edit Reservation </h1>
+        <nav>
+            <ul>
+                <li><a href="subReservation">Back</a></li>
+                <li><a href="../../studentPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content section for editing reservations -->
+    <main>
+        <section class="edit-reservation">
+            <h2>Edit Your Reservation</h2>
+            <form id="edit-reserveForm">
+                <!-- Reservation ID input to fetch and edit specific reservation -->
+                <label for="reservation-id">Reservation ID:</label>
+                <input type="text" id="reservation-id" name="reservation-id" required>
+                
+                <!-- Laboratory selection dropdown -->
+                <label for="edit-lab">Select Laboratory:</label>
+                <select id="edit-lab" name="edit-lab" required>
+                    <option value="lab1">Lab Alpha</option>
+                    <option value="lab2">Lab Beta</option>
+                    <option value="lab3">Lab Charlie</option>
+                </select>
+
+                <!-- Date input for selecting the new date -->
+                <label for="edit-date">Select New Date:</label>
+                <input type="date" id="edit-date" name="edit-date" required>
+
+                <!-- Submit button to update the reservation -->
+                <button type="submit">Update Reservation</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const editReserve = document.getElementById('edit-reserveForm');
+
+            editReserve.addEventListener('submit', function (event) {
+
+                event.preventDefault();
+
+                const lab = document.getElementById('edit-lab').value;
+                const date = document.getElementById('edit-date').value;
+
+                const url = `reserveslot?lab=${encodeURIComponent(lab)}`;
+                window.location.href = url;
+            });
+        });
+    </script>
+
+</body>
+</html>

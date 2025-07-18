@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Profile</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+      <!-- Header section containing the title and navigation menu -->
+      <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Delete Profile</h1>
+        <nav>
+            <ul>
+                <li><a href="subProfile">Back</a></li>
+                <li><a href="../../studentPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <form action="/deleteUser" method="POST">
+                <h3>Do you want to Delete Your Profile?</h3>
+                <button type="button" id="openPopupBtn">Delete Profile</button>
+                <div id="popup" class="popup">
+                    <div class="popup-content">
+                        <span class="close">&times;</span>
+                        <p>Are you sure?</p>
+                        <img src="../images/sadcat.png">
+                        <button type="submit" id="redirectBtn">Delete Profile</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </main>
+    
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Get the modal
+            var popup = document.getElementById("popup");
+
+            // Get the button that opens the modal
+            var btn = document.getElementById("openPopupBtn");
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // Get the redirect button
+            var redirectBtn = document.getElementById("redirectBtn");
+
+            // When the user clicks the button, open the modal 
+            btn.onclick = function() {
+                popup.style.display = "block";
+            }
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() {
+                popup.style.display = "none";
+            }
+
+            // When the user clicks the redirect button, redirect to index.html
+            redirectBtn.onclick = function() {
+                window.location.href = "../index"; // Redirect to index.html
+            }
+        });
+    </script>
+</body>
+</html>

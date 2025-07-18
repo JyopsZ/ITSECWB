@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Reservation</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/buttons.css">
+</head>
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Remove a Reservation</h1>
+        <nav>
+            <ul>
+                <li><a href="LSubReservation">Back</a></li>
+                <li><a href="../../labtechPage">Home</a></li>
+            </ul>
+        </nav>
+
+    </header>
+    <main>
+            <section class="viewReservations">
+                <h2 class="view-profile">Choose a Reservation to Remove</h2>
+                
+                <section class="view-Reservationsub">
+                    <div id="viewForm">
+                        <h2>Lab Alpha - Seat A1</h2>
+                        <a href="LViewOtherProfile">Liam Anderson</a>
+                        <p>ID: 012345</p>
+                        <span class="bold">Date: </span> July 29, 2024 <span class="time">10:00 - 10:30 AM</span>
+                    </div>
+                </section>
+                
+                <section class="view-Reservationsub">
+                    <div id="viewForm">
+                        <h2>Lab Beta - Seat B2</h2>
+                        <p>Adrian Villador</p>
+                        <p>ID: 021342</p>
+                        <span class="bold">Date: </span> July 30, 2024 <span class="time">02:00 - 02:30 PM</span>
+                    </div>
+                </section>
+
+                <section class="view-Reservationsub">
+                    <div id="viewForm">
+                        <h2>Lab Beta - Seat B3</h2>
+                        <p>Jason Derulo</p>
+                        <p>ID: 021343</p>
+                        <span class="bold">Date: </span> July 30, 2024 <span class="time">02:00 - 02:30 PM</span>
+                    </div>
+                </section>
+
+                <button id="submit-button" class="submit-button">Submit</button>
+
+            </section>
+    </main>
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const reservationSections = document.querySelectorAll(".view-Reservationsub");
+            let selectedSection = null;
+
+            reservationSections.forEach(section => {
+                
+                section.addEventListener("click", function() {
+                    
+                    if (selectedSection) {
+                        
+                        selectedSection.classList.remove("selected");
+                    }
+                    
+                    section.classList.add("selected");
+                    selectedSection = section;
+                });
+            });
+
+            const submitButton = document.querySelector("#submit-button");
+            submitButton.addEventListener("click", function() {
+                
+                const confirmRemove = confirm("Are you sure you want to remove this reservation?");
+
+                if (confirmRemove) {
+                    
+                    window.location.href = "labtechPage";
+                } 
+            });
+        });
+    </script>
+</body>
+</html>

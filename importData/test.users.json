@@ -1,0 +1,104 @@
+[{
+  "_id": {
+    "$oid": "669e375322fbb59a9a2a4875"
+  },
+  "firstName": "Adrian",
+  "lastName": "Villador",
+  "email": "adrian@gmail.com",
+  "password": "$2b$10$Wp8YiWkbXTYD2pTziqpEae/H8FXoNBwPk2CCzjlVN6xzoXlnazbOi",
+  "role": "student",
+  "image": "default.jpg",
+  "userID": 5006,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669e413af58a473d70a7ce40"
+  },
+  "firstName": "Mykel",
+  "lastName": "Tiu",
+  "email": "mykel@gmail.com",
+  "password": "$2b$10$3/6GDDs3wej4C./8.8X0HOU4tWCg9X7Nk82UotVEvGiBukiGzQXhG",
+  "role": "student",
+  "image": "default.jpg",
+  "userID": 5007,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669e4152f58a473d70a7ce45"
+  },
+  "firstName": "Andrew",
+  "lastName": "Meda",
+  "email": "andrew.meda@dlsu.edu.ph",
+  "password": "$2b$10$1TmUvQr4ExC9aIdchOdEfuNdSVAT1RRzdeIWOCj13arRKqb1ixCea",
+  "role": "labtech",
+  "image": "andrew.jpg",
+  "userID": 5008,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669e4168f58a473d70a7ce4a"
+  },
+  "firstName": "Sarah",
+  "lastName": "Gateway",
+  "email": "sarah.gateway@dlsu.edu.ph",
+  "password": "$2b$10$6lIjPlvvxEy8q/6nE34QyetZypTMf3QA5YSvbo4MKS34w0pgSY3kG",
+  "role": "labtech",
+  "image": "sarah.jpg",
+  "userID": 5009,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669e417ef58a473d70a7ce4f"
+  },
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@dlsu.edu.ph",
+  "password": "$2b$10$.B/qkJ.viwEEL/oDCfcbju4PlES7rCr2BHswD61gbELlWcp9p6ai.",
+  "role": "labtech",
+  "image": "john.jpg",
+  "userID": 5010,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669e4193f58a473d70a7ce54"
+  },
+  "firstName": "Brad",
+  "lastName": "Pitt",
+  "email": "brad_pitt@dlsu.edu.ph",
+  "password": "$2b$10$pzziaKqbqp4L/RpQpz/dIuCxRcjCkTJnWbXFjZD407pd6tjlkxGBW",
+  "role": "student",
+  "image": "brad.jpg",
+  "userID": 5011,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669e41aaf58a473d70a7ce59"
+  },
+  "firstName": "Liam",
+  "lastName": "Anderson",
+  "email": "liam_anderson@dlsu.edu.ph",
+  "password": "$2b$10$j.dkgb3uyJu6lfxfl2CXp.5eaqkBcyWiWEygtRh74Agm.UKImC0Tu",
+  "role": "student",
+  "image": "default.jpg",
+  "userID": 5012,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669e41bcf58a473d70a7ce5e"
+  },
+  "firstName": "Timmy",
+  "lastName": "Yap",
+  "email": "timmy_yap@dlsu.edu.ph",
+  "password": "$2b$10$UZCJjP6dSxJ//ZB92r8QZOoZYwHgLv0rqcRyRX.B0v/a.2nvo77ry",
+  "role": "student",
+  "image": "default.jpg",
+  "userID": 5013,
+  "__v": 0
+}]

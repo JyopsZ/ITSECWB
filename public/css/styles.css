@@ -1,0 +1,353 @@
+/* styles.css */
+/* Reference for fade in: https://www.geeksforgeeks.org/how-to-create-fade-in-effect-on-page-load-using-css/ *
+/* Basic reset for body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+
+    height: 100%;
+
+    background-image: url('../images/background.avif');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+
+    animation: fadeInAnimation ease 0.8s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Styling for header section */
+header {
+    
+    background: rgb(25,144,25);
+    background: linear-gradient(90deg, rgba(25,144,25,1) 0%, rgba(45,195,73,1) 100%);
+    
+    color: white;
+    padding: 10px;
+    text-align: center;
+
+    width: 100%;
+}
+
+#logo{
+    width: 70px;
+    height: 70px;
+}
+
+/* Styling for navigation menu */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Center main content vertically and horizontally */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-image: url(images/background.avif);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+
+    padding: 40px;
+}
+
+main:after {
+
+    content: "";
+    display: block;
+}
+
+/* Styling for sections (forms and intro) */
+section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+}
+
+/* Styling for form labels */
+form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Styling for form inputs, select, and button */
+form input,
+form select,
+form button {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Styling for form buttons */
+form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Hover effect for form buttons */
+form button:hover {
+    background-color: #45a049;
+}
+
+
+footer {
+
+    background: rgb(25,144,25);
+    background: linear-gradient(90deg, rgba(25,144,25,1) 0%, rgba(45,195,73,1) 100%);
+    
+    color: white;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    height: 40px;
+
+    margin-top: auto;
+}
+
+
+.time-slot {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.time-slot h2 {
+    margin: 0;
+}
+
+.main-container {
+    height: calc(100vh - 150px); /* Adjust the height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+
+.round-image {
+    width: 150px; /* Adjust the width as needed */
+    height: 150px; /* Adjust the height as needed */
+    border-radius: 50%;
+    object-fit: cover; /* Ensures the image covers the entire element without stretching */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.section-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Space between sections */
+    overflow: auto; /* Make content scrollable */
+}
+
+.edit-footer {
+    position: relative;
+}
+.edit-header {
+    position: relative;
+}
+
+.view-section2 {
+    width: 600px;
+    position: relative; /* Set main section as the positioning context */
+    display: grid; /* Use CSS Grid layout */
+}
+
+.view-sectionsub {
+    width: 560px;
+    margin-bottom: 20px;
+}
+
+.sub-menu {
+
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time {
+
+    position: absolute;
+    bottom: 10;
+    margin-left: 300px;
+    font-style: italic;
+    font: Arial;
+    font-size: 16px;
+    color:#998;
+    font-weight: normal;
+
+}
+
+/* Basic styles for the pop-up */
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Pop-up content */
+.popup-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 25%; /* Could be more or less, depending on screen size */
+}
+
+/* New style for success message */
+.success-message {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+/* Close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.viewReservations {
+    width: 600px;
+    position: relative; /* Set main section as the positioning context */
+    display: grid; /* Use CSS Grid layout */
+}
+
+.view-Reservationsub {
+    width: 560px;
+    margin-bottom: 20px;
+    border: 1px solid ;
+}
+
+.user-card {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 8px;
+    background: rgb(25,144,25);
+    background: linear-gradient(90deg, rgba(25,144,25,1) 0%, rgba(45,195,73,1) 100%);
+}
+
+.user-card p{
+    color: white;
+}
+.user-card img {
+    display: block;
+    margin: 0 auto 16px;
+}
+.user-card p {
+    margin: 8px 0;
+}
+
+/* Styling for about container and cards */
+.about-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.about-card {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 20px;
+    padding: 20px;
+    width: calc(33% - 60px);
+    box-sizing: border-box;
+}
+
+.about-card h3 {
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
+    .about-card {
+        width: calc(50% - 40px);
+    }
+}
+
+@media (max-width: 480px) {
+    .about-card {
+        width: calc(100% - 40px);
+    }
+}

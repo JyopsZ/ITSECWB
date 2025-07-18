@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reservation</title>
+        <link rel="stylesheet" href="../css/styles.css">
+        <link rel="stylesheet" href="../css/availability.css">
+        <link rel="stylesheet" href="../css/tooltip.css">
+        <style>
+            body {
+                background-image: url("../images/seat-background.jpg");
+            }
+        </style>
+    </head>
+<body>
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Reserve for a Student</h1>
+        <nav>
+            <ul>
+                <li><a href="/labtechView/LSubReservation">Back</a></li>
+                <li><a href="../../labtechPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="reservation-form">
+            <h2>Reserve a Seat</h2>
+            <form id="reservation" action="/LReservation" method="POST">
+                <label for="labName">Select Laboratory:</label>
+                <select id="labName" name="labName" required>
+                    <option value="lab1">Lab Alpha</option>
+                    <option value="lab2">Lab Beta</option>
+                    <option value="lab3">Lab Charlie</option>
+                </select>
+                <label for="date">Select Date:</label>
+                <input type="date" id="date" name="date" required>
+                <label for="time">Select Time:</label>
+                <select id="time" name="time" required>
+                    <option value="nine">9:00 - 9:30 AM</option>
+                    <option value="nineThirty">9:30 - 10:00 AM</option>
+                    <option value="ten">10:00 - 10:30 AM</option>
+                </select>
+                <label for="reserver">Reserved For:</label>
+                <input type="text" id="reserver" name="reserver">
+                
+                <!-- Hidden inputs to store seat position -->
+                <input type="hidden" id="seatRow" name="seatRow" value="">
+                <input type="hidden" id="seatCol" name="seatCol" value="">
+
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+        <div class="labLayout">
+            <h2>Select a seat:</h2>
+            <div id="seat-container" class="grid"></div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const labSelect = document.getElementById('labName');
+    const dateInput = document.getElementById('date');
+    const timeSelect = document.getElementById('time');
+    const container = document.getElementById('seat-container');
+    const seatRowInput = document.getElementById('seatRow');
+    const seatColInput = document.getElementById('seatCol');
+
+    let selectedSeat = null;
+
+    // Fetch and display seats initially
+    fetchAndDisplaySeats();
+
+    labSelect.addEventListener('change', fetchAndDisplaySeats);
+    dateInput.addEventListener('change', fetchAndDisplaySeats);
+    timeSelect.addEventListener('change', fetchAndDisplaySeats);
+
+    function fetchAndDisplaySeats() {
+        const labName = labSelect.value;
+        const date = dateInput.value;
+        const time = timeSelect.value;
+
+        if (labName && date && time) {
+            fetch(`/LReservations?labName=${labName}&date=${date}&time=${time}`)
+                .then(response => response.json())
+                .then(takenSeats => {
+                    displaySeats(labName, takenSeats);
+                })
+                .catch(error => console.error('Error fetching reservations:', error));
+        }
+    }
+
+    function createSeat(i, j, takenSeats) {
+        const seat = document.createElement("div");
+        const takenSeat = takenSeats.find(seat => seat.seatPos[0] === i && seat.seatPos[1] === j);
+        if (takenSeat) {
+            seat.classList.add("taken");
+            const tooltip = document.createElement("span");
+            tooltip.classList.add("tooltiptext");
+            seat.classList.add("tooltip");
+            
+            const reserverForm = document.createElement("form");
+            reserverForm.method = "POST";
+            reserverForm.action = "/tooltipLab";
+            
+            const reserverInput = document.createElement("input");
+            reserverInput.type = "hidden";
+            reserverInput.name = "userName";
+            reserverInput.value = takenSeat.reserver;
+            
+            const reserverButton = document.createElement("button");
+            reserverButton.type = "submit";
+            reserverButton.textContent = takenSeat.reserver;
+            reserverButton.classList.add("link");
+            
+            reserverForm.appendChild(reserverInput);
+            reserverForm.appendChild(reserverButton);
+            tooltip.appendChild(reserverForm);
+            seat.appendChild(tooltip);
+        }
+        seat.addEventListener("click", function() {
+            if (!seat.classList.contains("taken")) {
+                if (selectedSeat) {
+                    selectedSeat.classList.remove("selected");
+                }
+                seat.classList.add("selected");
+                selectedSeat = seat;
+                seatRowInput.value = i;
+                seatColInput.value = j;
+            }
+        });
+        return seat;
+    }
+
+    function displaySeats(labName, takenSeats) {
+        container.innerHTML = '';
+
+        switch (labName) {
+            case 'lab1':
+                container.className = 'grid';
+                for (let i = 1; i <= 5; i++) {
+                    for (let j = 1; j <= 5; j++) {
+                        container.appendChild(createSeat(i, j, takenSeats));
+                    }
+                }
+                break;
+            case 'lab2':
+                container.className = 'grid-two';
+                for (let i = 1; i <= 4; i++) {
+                    for (let j = 1; j <= 6; j++) {
+                        if (i === 4 && (j === 3 || j === 4)) {
+                            const emptySpace = document.createElement("div");
+                            emptySpace.style.visibility = 'hidden';
+                            container.appendChild(emptySpace);
+                            continue;
+                        }
+                        container.appendChild(createSeat(i, j, takenSeats));
+                    }
+                }
+                break;
+            case 'lab3':
+                container.className = 'grid-three';
+                for (let i = 1; i <= 3; i++) {
+                    for (let j = 1; j <= 8; j++) {
+                        if ((i === 1 || i === 2 || i === 3) && (j === 3 || j === 6)) {
+                            const emptySpace = document.createElement("div");
+                            emptySpace.style.visibility = 'hidden';
+                            container.appendChild(emptySpace);
+                            continue;
+                        }
+                        container.appendChild(createSeat(i, j, takenSeats));
+                    }
+                }
+                break;
+        }
+    }
+});
+    </script>
+</body>
+</html>

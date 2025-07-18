@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Reservation</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Edit Reservation </h1>
+        <nav>
+            <ul>
+                <li><a href="/labtechView/LSubReservation">Back</a></li>
+                <li><a href="../../labtechPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content section for editing reservations -->
+    <main>
+        <section class="edit-reservation">
+            <h2>Edit A Reservation</h2>
+            <form id="edit-reserveForm" action="/LEditReservation" method="POST">
+                <!-- Reservation ID input to fetch and edit specific reservation -->
+                <label for="reservation-id">Reservation ID:</label>
+                <input type="number" id="reservId" name="reservId" required>
+                
+                <!-- Submit button to update the reservation -->
+                <button type="submit">Update Reservation</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+</body>
+</html>

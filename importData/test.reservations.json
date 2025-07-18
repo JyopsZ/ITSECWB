@@ -1,0 +1,180 @@
+[{
+  "_id": {
+    "$oid": "669010c7cd656e2b4ff462b3"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    1,
+    1
+  ],
+  "date": "2024-07-12",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1006,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669010d7cd656e2b4ff462b8"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    2,
+    2
+  ],
+  "date": "2024-07-13",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1007,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669011a36fde80ccc81a03ff"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    1,
+    1
+  ],
+  "date": "2024-07-10",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1008,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669012779cf29200cc2758f1"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    1,
+    2
+  ],
+  "date": "2024-07-11",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1009,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6690139b4938d79d1d400319"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    1,
+    2
+  ],
+  "date": "2024-07-10",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1010,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669013a34938d79d1d40031f"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    2,
+    3
+  ],
+  "date": "2024-07-10",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1011,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669013e14938d79d1d400326"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    2,
+    2
+  ],
+  "date": "2024-07-10",
+  "time": "nine",
+  "reserver": "Brad Pitt",
+  "reservationID": 1012,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6690141a4938d79d1d400330"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    1,
+    1
+  ],
+  "date": "2024-07-25",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1013,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6690157cca1d14f4e77357a6"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    1,
+    3
+  ],
+  "date": "2024-07-10",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1014,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66901588ca1d14f4e77357ad"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    2,
+    3
+  ],
+  "date": "2024-07-11",
+  "time": "nine",
+  "reserver": "Mykel Tiu",
+  "reservationID": 1015,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669015a3ca1d14f4e77357b6"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    3,
+    3
+  ],
+  "date": "2024-07-10",
+  "time": "nine",
+  "reserver": "Brad Pitt",
+  "reservationID": 1016,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669015abca1d14f4e77357bd"
+  },
+  "labName": "lab1",
+  "seatPos": [
+    2,
+    2
+  ],
+  "date": "2024-07-11",
+  "time": "nine",
+  "reserver": "Brad Pitt",
+  "reservationID": 1017,
+  "__v": 0
+}]

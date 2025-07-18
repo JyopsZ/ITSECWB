@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Reservation</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Edit Reservation</h1>
+        <nav>
+            <ul>
+                <li><a href="/studentView/subReservation">Back</a></li>
+                <li><a href="../../studentPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content section for editing reservations -->
+    <main>
+        <section class="edit-reservation">
+            <!-- Display error message if any -->
+            {{#if error}}
+                <p style="color: red;">{{error}}</p>
+            {{/if}}
+            
+            <!-- Display success message if any -->
+            {{#if success}}
+                <p style="color: green;">{{success}}</p>
+            {{/if}}
+            <h2>Edit Your Reservation</h2>
+            <form id="edit-reserveForm" action="/updateReservation" method="POST">
+                <!-- Reservation ID input to fetch and edit specific reservation -->
+                <label for="reservation-id">Reservation ID:</label>
+                <input type="text" id="reservationid" name="reservationid" value="{{specificReserve.reservationID}}" readonly>
+
+                <!-- Laboratory selection dropdown -->
+                <label for="editlab">Select Laboratory:</label>
+                <select id="editlab" name="editlab" value="{{specificReserve.labName}}"required>
+                    <option value="lab1" >Lab Alpha</option>
+                    <option value="lab2" >Lab Beta</option>
+                    <option value="lab3" >Lab Charlie</option>
+                </select>
+
+                <!-- Date input for selecting the new date -->
+                <label for="editdate">Select New Date:</label>
+                <input type="date" id="editdate" name="editdate" value="{{specificReserve.date}}" required>
+
+                <label for="edittime">Select Time:</label>
+                <select id="edittime" name="edittime" value="{{specificReserve.time}}"required>
+                    <option value="nine" >9:00 - 9:30 AM</option>
+                    <option value="nineThirty" >9:30 - 10:00 AM</option>
+                    <option value="ten" >10:00 - 10:30 AM</option>
+                </select>
+
+                <label for="editSeat">Select Seat:</label>
+                <input type="text" id="editSeat" name="editSeat" value="{{specificReserve.seatPos}}">
+
+                <!-- Submit button to update the reservation -->
+                <button type="submit">Update Reservation</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
+

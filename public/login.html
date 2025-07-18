@@ -1,0 +1,43 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <img src="images/logo.png" id="logo">
+        <h1>Login</h1>
+        <nav>
+            <ul>
+                <li><a href="index">Back</a></li>
+                <li><a href="register">Register</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="login-form">
+            <h2>Login to Your Account</h2>
+            <form id="loginForm" action="/login" method="POST">
+                <label for="email">DLSU Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Login</button>
+            </form>
+
+            <p id="loginMessage"></p>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+</body>
+</html>

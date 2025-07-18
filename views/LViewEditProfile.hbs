@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View or Edit Profile</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+    <body>
+        <header>
+            <img src="../images/logo.png" id="logo">
+            <h1>View | Edit Profile</h1>
+            <nav>
+                <ul>
+                    <li><a href="/labtechView/LSubProfile">Back</a></li>
+                    <li><a href="../../labtechPage">Home</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div class="section-container">
+                <section class="edit-section">
+                    <h2 class="edit-profile">Edit Your Profile</h2>
+                    <form id="editForm" action="/user/editUserProfileWithImage" method="POST" enctype="multipart/form-data">
+                        {{#each userData}}
+                        <input type="hidden" id="userId" name="userId" value="{{this.userID}}">
+
+                        <div class="image-container">
+                            <!-- Display user image -->
+                            <img src='../images/{{this.image}}' alt="Round Image" class="round-image" id="preview">
+                            <input type="file" id="imageUpload" name="imageUpload" class="edit-button" accept="image/*">
+                        </div>
+
+                        <label for="id">DLSU ID:</label>
+                        <input type="text" id="id" name="id" value="{{this.userID}}" readonly>
+
+                        <!-- Email input field -->
+                        <label for="email">DLSU Email:</label>
+                        <input type="text" id="email" name="email" value="{{this.email}}" readonly>
+
+                        <!-- FirstName input field -->
+                        <label for="firstName">First Name:</label>
+                        <input type="text" id="firstName" name="firstName" value="{{this.firstName}}">
+
+                        <!-- LastName input field -->
+                        <label for="lastName">Last Name:</label>
+                        <input type="text" id="lastName" name="lastName" value="{{this.lastName}}">
+
+                        <!-- Password input field -->
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" value="{{this.password}}">
+
+                        {{/each}}
+
+                        <!-- Submit button to save changes -->
+                        <button type="submit" class="edit-button" id="saveButton">Save</button>
+                    </form>
+                </section>
+            </div>
+        </main>
+        <footer class="edit-footer">
+            <p>&copy; 2024 LabLink. All rights reserved.</p>
+        </footer>
+    </body>
+</html>

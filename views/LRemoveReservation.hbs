@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reservations</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/buttons.css">
+</head>
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>View Reservations</h1>
+        <nav>
+            <ul>
+                <li><a href="/labtechView/LSubReservation">Back</a></li>
+                <li><a href="../../labtechPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="viewReservations">
+            <h2 class="view-profile">Reservations</h2>
+            {{#each getReservations}}
+            <section class="view-Reservationsub" data-reservation-id="{{this.reservationID}}">
+                <div id="viewForm">
+                    <h2>{{this.labName}} - Seat {{this.seatPos}}</h2>
+                    <span class="bold">ID: </span> {{this.reservationID}} </br>
+                    <span class="bold">Reserved By: </span> {{this.reserver}} </br>
+                    <span class="bold">Date: </span> {{this.date}} <span class="time">{{this.time}}</span>
+                </div>
+            </section>
+            {{/each}}
+
+            <button id="submit-button" class="submit-button">Submit</button>
+        </section>
+    </main>
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const submitButton = document.getElementById('submit-button');
+    const reservationSections = document.querySelectorAll('.view-Reservationsub');
+
+    submitButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        const selectedReservation = document.querySelector('.view-Reservationsub.selected');
+        
+        if (selectedReservation) {
+            const reservationId = selectedReservation.dataset.reservationId;
+            
+            if (confirm('Are you sure you want to remove this reservation?')) {
+                fetch(`/removeReservation/${reservationId}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        selectedReservation.remove();
+                        alert('Reservation removed successfully');
+                        window.location.href = '../../labtechPage';
+                    } else {
+                        alert('Failed to remove reservation: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while removing the reservation');
+                });
+            }
+        } else {
+            alert('Please select a reservation to remove');
+        }
+    });
+
+    reservationSections.forEach(section => {
+        section.addEventListener('click', function() {
+            reservationSections.forEach(s => s.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+});
+</script>
+</body>
+</html>

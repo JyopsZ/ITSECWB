@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reservations</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>View Reservations</h1>
+        <nav>
+            <ul>
+                <li><a href="/studentView/subReservation">Back</a></li>
+                <li><a href="../../studentPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="viewReservations">
+            <h2 class="view-profile">Reservations</h2>
+            {{#each getReservations}}
+            <section class="view-Reservationsub" data-reservation-id="{{this.reservationID}}">
+                <div id="viewForm">
+                    <h2>{{this.labName}} - Seat {{this.seatPos}}</h2>
+                    <span class="bold">ID: </span> {{this.reservationID}} </br>
+                    <span class="bold">Reserved By: </span> {{this.reserver}} </br>
+                    <span class="bold">Date: </span> {{this.date}} <span class="time">{{this.time}}</span>
+                </div>
+            </section>
+            {{/each}}
+        </section>
+    </main>
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+</body>
+</html>

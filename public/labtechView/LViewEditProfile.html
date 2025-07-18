@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View or Edit Profile</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+      <!-- Header section containing the title and navigation menu -->
+      <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>View or Edit Profile</h1>
+        <nav>
+            <ul>
+                <li><a href="../labtechView/LSubProfile">Back</a></li>
+                <li><a href="../../labtechPage">Home</a></li>
+            </ul>
+        </nav>
+
+    </header>
+    <main>
+        <div class="section-container">
+            <section class="edit-section">
+                <h2 class="edit-profile">Edit Profile</h2>
+                <form id="editForm">
+                    <div class="image-container">
+                        <!-- Email input field -->
+                        <img src="../images/default.jpg" alt="Round Image" class="round-image">
+                        <button type="button" class="edit-button">Change Photo</button>
+                    </div>
+                    
+                    <label for="email">DLSU Email:</label>
+                    <input type="text" id="email" name="email" value=" " readonly>
+
+                    <!-- FirstName input field -->
+                    <label for="FirstName">First Name:</label>
+                    <input type="text" id="FirstName" name="FirstName">
+
+                    <!-- LastName input field -->
+                    <label for="LastName">Last Name:</label>
+                    <input type="text" id="LastName" name="LastName">
+
+                    <!-- Password input field -->
+                    <label for="password">Password:</label>
+                    <input type="text" id="password" name="password">
+
+                    <!-- Submit button to log in -->
+                    <button type="button" class="edit-button" id="saveButton">Save</button>
+                </form>
+            </section>
+        </div>
+    </main>
+    <!-- Footer section with copyright information -->
+    <footer class="edit-footer">
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+</body>
+</html>

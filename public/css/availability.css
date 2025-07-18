@@ -1,0 +1,65 @@
+.grid {
+
+    display: grid;
+    grid-template-columns: repeat(5, 80px);
+    grid-template-rows: repeat(5, 80px);
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.grid-two {
+
+    display: grid;
+    grid-template-columns: repeat(6, 80px);
+    grid-template-rows: repeat(4, 80px);
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.grid-three {
+
+    display: grid;
+    grid-template-columns: repeat(8, 80px);
+    grid-template-rows: repeat(3, 80px);
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.grid div, .grid-two div, .grid-three div{
+    
+    width: 50px;
+    height: 50px;
+    background-color: lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    box-shadow: 10px 10px 12px 0px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 10px 10px 12px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 12px 0px rgba(0,0,0,0.75);
+
+}
+
+.grid .taken, .grid-two .taken, .grid-three .taken{
+    
+    background-color: red;
+}
+
+.grid .selected, .grid-two .selected, .grid-three .selected{
+
+    background-color: green;
+}
+
+.slotButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.labLayout {
+
+    display: flex;
+    flex-direction: column;
+}

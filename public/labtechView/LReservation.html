@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reservation</title>
+        <link rel="stylesheet" href="../css/styles.css">
+    </head>
+
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Make a Reservation</h1>
+        <nav>
+            <ul>
+                <li><a href="LSubReservation">Back</a></li>
+                <li><a href="../../labtechPage">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Main content section with a form to check slot availability -->
+    <main>
+        <section class="reservation-form">
+            <h2>Reserve for a Student</h2>
+            <form id="reservation">
+                <!-- Laboratory selection dropdown -->
+                <label for="lab">Select Laboratory:</label>
+                <select id="lab" name="lab" required>
+                    <option value="lab1">Lab Alpha</option>
+                    <option value="lab2">Lab Beta</option>
+                    <option value="lab3">Lab Charlie</option>
+                </select>
+                
+                <!-- Date input for selecting the date -->
+                <label for="date">Select Date:</label>
+                <input type="date" id="date" name="date" required>
+
+                <!-- Submit button to check availability -->
+                <button type="submit">Check Availability</button>
+            </form>
+        </section>
+    </main>
+    
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const reservation = document.getElementById('reservation');
+
+            reservation.addEventListener('submit', function (event) {
+
+                event.preventDefault();
+
+                const lab = document.getElementById('lab').value;
+                const date = document.getElementById('date').value;
+
+                const url = `LReserveslot?lab=${encodeURIComponent(lab)}`;
+                window.location.href = url;
+
+                /*
+                if (lab === 'lab1' && date === '2024-05-27') {
+                    
+                    window.location.href = 'lab1.html';
+                } 
+                        
+                else if (lab === 'lab2' && date === '2024-05-27') {
+                    
+                    window.location.href = 'lab2.html';
+                }
+
+                else {
+
+                    window.location.href = 'lab3.html';
+                }*/
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Alpha</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/availability.css">
+    <link rel="stylesheet" href="../css/tooltip.css">
+</head>
+<body>
+    <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Lab Seat Reservation</h1>
+        <style>
+            body {
+
+                background-image: url("../images/seat-background.jpg");
+            }
+
+            main {
+
+                display: flex;
+                flex-direction: column;
+            }
+
+        </style>
+    </header>
+    <main>
+        <div id="seat-container" class="grid"></div>
+        <button id="confirm-button" class="slotButton">Confirm</button>
+    </main>
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const container = document.querySelector("#seat-container");
+            const takenSeats = [
+
+                { row: 1, col: 1, name: "Liam" },
+                { row: 2, col: 4, name: "Adrian" },
+                { row: 3, col: 4, name: "Liam" },
+                { row: 4, col: 5, name: "Julius" },
+                { row: 5, col: 5, name: "Darius" }
+            ];
+
+            for (let i = 1; i <= 5; i++) {
+
+                for (let j = 1; j <= 5; j++) {
+
+                    const seat = document.createElement("div");
+                    
+                    const takenSeat = takenSeats.find(seat => seat.row === i && seat.col === j);
+                    if (takenSeat) {
+                        
+                        seat.classList.add("taken");
+                        
+                        const tooltip = document.createElement("span");
+                        tooltip.classList.add("tooltiptext");
+                        tooltip.textContent = takenSeat.name;
+                        seat.classList.add("tooltip");
+                        seat.appendChild(tooltip);
+
+                        if (takenSeat.name === "Liam") {
+                            
+                            tooltip.innerHTML = '<a href="LViewOtherProfile" class="link">Liam</a>';
+                        }
+                    }
+
+                    seat.addEventListener("click", function() {
+
+                        if (!seat.classList.contains("taken")) {
+
+                            seat.classList.toggle("selected");
+                        }
+                    });
+
+                    container.appendChild(seat);
+                }
+            }
+
+            const confirmButton = document.querySelector("#confirm-button");
+            
+            confirmButton.addEventListener("click", function() {
+
+                const confirmReserve = confirm("Are you sure you want to reserve the following?");
+                
+                if (confirmReserve) {
+
+                    window.location.href = "labtechPage";
+                }
+
+                
+            });
+
+        });
+    </script>
+</body>
+</html>
