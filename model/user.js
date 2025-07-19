@@ -9,7 +9,11 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type: String, required: true },
     image: { type: String, default: null },
-    userID: { type: Number, unique: true }
+    userID: { type: Number, unique: true },
+
+    // For login attempt tracking
+    failedLoginAttempts: { type: Number, default: 0 },
+    lockUntil: { type: Date, default: null },
 });
 
 const User = mongoose.model('User', userSchema);

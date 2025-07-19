@@ -39,5 +39,15 @@
     <footer>
         <p>&copy; 2024 LabLink. All rights reserved.</p>
     </footer>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        if (error) {
+            document.getElementById('loginMessage').textContent = decodeURIComponent(error);
+            document.getElementById('loginMessage').style.color = 'red';
+        }
+    </script>
 </body>
 </html>

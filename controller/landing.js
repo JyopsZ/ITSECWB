@@ -23,73 +23,102 @@ router.post('/login', async (req, res) => {
         const user = await User.findOne({ email }); // check list of emails in db then display user not found error (Fix kase vulnerability, make general)
 
         if (!user) {
-            return res.status(404).redirect('/login?error=User not found. Please register.');
+            return res.status(401).redirect('/login?error=Invalid username and/or password.');
         }
 
-        // Compare the hashed password with the plain text password
-        const isMatch = await bcryptjs.compare(password, user.password); // user.password = password from db
+        // Check if account is currently locked
+        if (user.lockUntil && user.lockUntil > Date.now()) {
+            return res.status(403).redirect('/login?error=Account is temporarily locked. Please try again later.');
+        }
+
+        const isMatch = await bcryptjs.compare(password, user.password);
+
+        const MAX_ATTEMPTS = 3; //change this to increase or decrease number of attempts
 
         if (!isMatch) {
-            return res.status(401).redirect('/login?error=Invalid credentials'); // error if user input password on field is no the same as hashed password on db
+            user.failedLoginAttempts += 1;
+
+            if (user.failedLoginAttempts >= MAX_ATTEMPTS) {
+                user.lockUntil = new Date(Date.now() + 1 * 60 * 1000); // 1 min lockout for testing
+                // user.lockUntil = new Date(Date.now() + 60 * 60 * 1000); // 1-hour lock for final 
+                user.failedLoginAttempts = 0;
+                await user.save();
+                return res.status(403).redirect('/login?error=Too many failed attempts. Account locked.');
+            }
+
+            await user.save();
+            return res.status(401).redirect('/login?error=Invalid username and/or password.');
         }
 
-        // Store user data in session
+        //  Successful login: reset counters
+        user.failedLoginAttempts = 0;
+        user.lockUntil = null;
+        await user.save();
+
         req.session.user = user;
 
-        // Redirect based on user role
         switch (user.role) {
             case 'student':
-                res.render('studentPage', { user }); // Redirect to student dashboard or main page
-                break;
+                return res.render('studentPage', { user });
             case 'labtech':
-                res.render('labtechPage', { user }); // Redirect to lab technician dashboard or main page
-                break;
+                return res.render('labtechPage', { user });
             default:
-                res.status(403).send('Unauthorized access');
+                return res.status(403).send('Unauthorized access');
         }
+
     } catch (error) {
         console.error(error);
-        res.status(500).redirect('/login?error=Server error');
+        return res.status(500).redirect('/login?error=Server error');
     }
 });
+
 
 router.get('/register', function(req, res) {
     res.sendFile(path.join(rootDir, 'public', 'register.html'));
 	//res.sendFile(path.join(__dirname + "\\" + "../public/register.html"));
 });
 
-let userIDCounter = 5013;
+let userIDCounter = 5020;
 
 router.post('/register', async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
+
+    // 2.1.5 & 2.1.6 – Enforce password length and complexity
+    const minLength = 8;
+    const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+
+    if (password.length < minLength) {
+        return res.status(400).redirect('/register?error=Password must be at least 8 characters long.');
+    }
+
+    if (!complexityRegex.test(password)) {
+        return res.status(400).redirect('/register?error=Password must include uppercase, lowercase, number, and special character.');
+    }
 
     try {
         // Check if the email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).send('Email already exists');
+            return res.status(400).redirect('/register?error=Email already exists.');
         }
 
-        // Hash the password
+        // 2.1.3 – Hash the password
         const saltRounds = 10;
         const hashedPassword = await bcryptjs.hash(password, saltRounds);
-
-        const userID = userIDCounter++;
 
         const newUser = new User({
             firstName,
             lastName,
             email,
             password: hashedPassword,
-            role,
-            userID
+            role
         });
 
         await newUser.save();
         res.status(201).redirect('/login');
     } catch (error) {
         console.error(error);
-        res.status(500).redirect('/register');
+        res.status(500).redirect('/register?error=Server error. Please try again.');
     }
 });
 
