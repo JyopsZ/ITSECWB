@@ -144,5 +144,19 @@ router.get('/AboutMe', function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/AboutMe.html"));
 });
 
-
 module.exports = router;
+
+// Custom error handler for 403 Forbidden
+router.get('/error/403', (req, res) => {
+    res.status(403).sendFile(path.join(rootDir, 'public', 'errors', 'error.html'));
+});
+
+// Custom error handler for 500 Internal Server Error
+router.get('/error/500', (req, res) => {
+    res.status(500).sendFile(path.join(rootDir, 'public', 'errors', 'error.html'));
+});
+
+// Catch-all for unmatched routes (404)
+router.use((req, res) => {
+    res.status(404).sendFile(path.join(rootDir, 'public', 'errors', 'error.html'));
+});
