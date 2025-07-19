@@ -17,20 +17,20 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body; // get data from form
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }); // check list of emails in db then display user not found error (Fix kase vulnerability, make general)
 
         if (!user) {
             return res.status(404).redirect('/login?error=User not found. Please register.');
         }
 
         // Compare the hashed password with the plain text password
-        const isMatch = await bcryptjs.compare(password, user.password);
+        const isMatch = await bcryptjs.compare(password, user.password); // user.password = password from db
 
         if (!isMatch) {
-            return res.status(401).redirect('/login?error=Invalid credentials');
+            return res.status(401).redirect('/login?error=Invalid credentials'); // error if user input password on field is no the same as hashed password on db
         }
 
         // Store user data in session
