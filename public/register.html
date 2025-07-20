@@ -37,7 +37,21 @@
 
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
+                <p>Password requires:</p>
+                <li>8 characters minimum</li>
+                <li>Uppercase, Lowercase</li>
+                <li>Number, and Special character</li>
+                <br>
 
+                <label for="question">Choose a Security Question:</label> <!-- Not yet implemented in database -->
+                <select id="question">
+                <option value="volvo">What is the city you were born in?</option>
+                <option value="saab">What is your sibling's nickname?</option>
+                <option value="opel">What was the first concert you attended?</option>
+                </select>
+
+                <label for="answer">Answer:</label> <!-- Not yet implemented in database -->
+                <input type="answer" id="answer" name="answer" required>
                 <label for="role">I am a:</label>
                 <select id="role" name="role" required>
                     <option value="student">Student</option>
