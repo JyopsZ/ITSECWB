@@ -49,6 +49,14 @@
                     <input type="password" id="password" name="password" value='{{this.password}}'>
                     {{/each}}
 
+                    {{#if errors}}
+                        <div class="error-messages">
+                            {{#each errors}}
+                                <p style="color: red; text-align: center;">{{this}}</p>
+                            {{/each}}
+                        </div>
+                    {{/if}}
+
                     <!-- Submit button to save changes -->
                     <button type="submit" class="edit-button" id="saveButton">Save</button>
                 </form>

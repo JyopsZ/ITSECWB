@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema({
     lockUntil: { type: Date, default: null },
 });
 
+
+// ✅ Enable auto-increment for userID
+userSchema.plugin(AutoIncrement, { inc_field: 'userID' });
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

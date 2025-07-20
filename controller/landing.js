@@ -78,7 +78,7 @@ router.get('/register', function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/register.html"));
 });
 
-let userIDCounter = 5020;
+let userIDCounter = 5021;
 
 router.post('/register', async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
@@ -146,6 +146,7 @@ router.get('/AboutMe', function(req, res) {
 
 module.exports = router;
 
+/* this shit make everything go boom
 // Custom error handler for 403 Forbidden
 router.get('/error/403', (req, res) => {
     res.status(403).sendFile(path.join(rootDir, 'public', 'errors', 'error.html'));
@@ -159,4 +160,4 @@ router.get('/error/500', (req, res) => {
 // Catch-all for unmatched routes (404)
 router.use((req, res) => {
     res.status(404).sendFile(path.join(rootDir, 'public', 'errors', 'error.html'));
-});
+});*/

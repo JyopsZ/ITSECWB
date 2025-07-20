@@ -123,11 +123,10 @@ router.get('/ViewEditProfile' ,isAuthenticated, async (req, res) => {
 });
 
 // Handling of form data to database
-router.post('/editInfo',isAuthenticated, async (req, res) => {
+router.post('/editInfo', isAuthenticated, async (req, res) => {
     try {
         const { firstName, lastName, password } = req.body;
 
-        // Find the user by userID
         const userId = req.session.user.userID;
         const user = await UserModel.findOne({ userID: userId });
 
@@ -135,34 +134,51 @@ router.post('/editInfo',isAuthenticated, async (req, res) => {
             return res.status(404).send('User not found');
         }
 
-        // Update the user's information
         user.firstName = firstName;
         user.lastName = lastName;
 
-        const saltRounds = 10;
-        const hashedPassword = await bcryptjs.hash(password, saltRounds);
-        user.password = hashedPassword;
+        const errors = [];
+
+        if (password) {
+            const minLength = 8;
+            const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+
+            if (password.length < minLength) {
+                errors.push('Password must be at least 8 characters long.');
+            }
+
+            if (!complexityRegex.test(password)) {
+                errors.push('Password must include uppercase, lowercase, number, and special character.');
+            }
+
+            if (errors.length === 0) {
+                const saltRounds = 10;
+                const hashedPassword = await bcryptjs.hash(password, saltRounds);
+                user.password = hashedPassword;
+            }
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).render('ViewEditProfile', {
+                userData: [user],
+                errors
+            });
+        }
 
         if (req.files && req.files.imageUpload) {
             const imageFile = req.files.imageUpload;
-            //const uploadPath = path.join(__dirname, '../public/images', `${Date.now()}-${imageFile.name}`);
             const uploadPath = path.join(rootDir, 'public', 'images', `${Date.now()}-${imageFile.name}`);
-            
-            // Move the file to the desired location
             imageFile.mv(uploadPath, (err) => {
                 if (err) {
                     console.error('Error uploading file:', err);
                     return res.status(500).send('Internal Server Error');
                 }
             });
-
-            user.image = path.basename(uploadPath); // Store the filename of the uploaded image
+            user.image = path.basename(uploadPath);
         }
 
-        // Save the updated user to the database
         await user.save();
 
-        // Update the session data with the new user information
         req.session.user = {
             userID: user.userID,
             firstName: user.firstName,

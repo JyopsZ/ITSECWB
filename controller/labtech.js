@@ -131,6 +131,27 @@ router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
             return res.status(404).send('User not found');
         }
 
+        // Password policy
+        const minLength = 8;
+        const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+
+        const errors = [];
+
+        if (password.length < minLength) {
+            errors.push('Password must be at least 8 characters long.');
+        }
+
+        if (!complexityRegex.test(password)) {
+            errors.push('Password must include uppercase, lowercase, number, and special character.');
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).render('LViewEditProfile', {
+                userData: [user],
+                errors
+            });
+        }
+
         // Update the user's information
         user.firstName = firstName;
         user.lastName = lastName;
@@ -172,6 +193,27 @@ router.post('/editInfolabtech',isAuthenticated, async (req, res) => {
         // Find the user by userID
         const userId = id;
         const user = await UserModel.findOne({ userID: userId });
+        
+        // Password policy
+        const minLength = 8;
+        const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+
+        const errors = [];
+
+        if (password.length < minLength) {
+            errors.push('Password must be at least 8 characters long.');
+        }
+
+        if (!complexityRegex.test(password)) {
+            errors.push('Password must include uppercase, lowercase, number, and special character.');
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).render('LViewEditProfile', {
+                userData: [user],
+                error: errors.join(' ')
+            });
+        }
 
         // Update the user's information
         user.firstName = firstName;
