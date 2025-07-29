@@ -36,13 +36,22 @@
                     <label for="email">DLSU Email:</label>
                     <input type="text" id="email" name="email" value='{{this.email}}' readonly>
 
+                    <!-- Replace the one above with this if we allow email editing.
+                    <label for="email">DLSU Email:</label>
+                    <input type="email" id="email" name="email" value='{{this.email}}'  
+                        pattern="^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Please provide a valid email address.">
+                    -->
+
                     <!-- FirstName input field -->
                     <label for="firstName">First Name:</label>
-                    <input type="text" id="firstName" name="firstName" value='{{this.firstName}}'>
+                    <input type="text" id="firstName" name="firstName" value='{{this.firstName}}'
+                     pattern=".{2,50}" title="First name must be between 2 and 50 characters.">
+                    
 
                     <!-- LastName input field -->
                     <label for="lastName">Last Name:</label>
-                    <input type="text" id="lastName" name="lastName" value='{{this.lastName}}'>
+                    <input type="text" id="lastName" name="lastName" value='{{this.lastName}}'
+                     pattern=".{2,50}" title="Last name must be between 2 and 50 characters.">
 
                     <!-- Password input field -->
                     <label for="password">Password:</label>

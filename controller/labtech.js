@@ -137,6 +137,22 @@ router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
 
         const errors = [];
 
+        // Validate firstName and lastName length
+        if (firstName.length < 2 || firstName.length > 50) {
+            errors.push('First name must be between 2 and 50 characters.');
+        }
+
+        if (lastName.length < 2 || lastName.length > 50) {
+            errors.push('Last name must be between 2 and 50 characters.');
+        }
+
+        // Validate email format
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            errors.push('Please provide a valid email address.');
+        }
+
+
         if (password.length < minLength) {
             errors.push('Password must be at least 8 characters long.');
         }
@@ -154,7 +170,8 @@ router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
 
         // Update the user's information
         user.firstName = firstName;
-        user.lastName = lastName;
+        user.lastName = lastName;   
+        user.email = email; 
 
         const saltRounds = 10;
         const hashedPassword = await bcryptjs.hash(password, saltRounds);

@@ -125,7 +125,7 @@ router.get('/ViewEditProfile' ,isAuthenticated, async (req, res) => {
 // Handling of form data to database
 router.post('/editInfo', isAuthenticated, async (req, res) => {
     try {
-        const { firstName, lastName, password } = req.body;
+        const { firstName, lastName, password, email } = req.body;
 
         const userId = req.session.user.userID;
         const user = await UserModel.findOne({ userID: userId });
@@ -139,6 +139,23 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
 
         const errors = [];
 
+        // 2.3.2 – Validate first name length (should be between 2 to 50 characters)
+        if (firstName.length < 2 || firstName.length > 50) {
+            errors.push('First name must be between 2 and 50 characters.');
+        }
+
+        // 2.3.2 – Validate last name length (should be between 2 to 50 characters)
+        if (lastName.length < 2 || lastName.length > 50) {
+            errors.push('Last name must be between 2 and 50 characters.');
+        }
+
+        // 2.3.2 - Validate Email Data Range
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            errors.push('Please provide a valid email address.');
+        }
+
+        // 2.1.5 & 2.1.6 – Enforce password length and complexity
         if (password) {
             const minLength = 8;
             const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
@@ -151,6 +168,7 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
                 errors.push('Password must include uppercase, lowercase, number, and special character.');
             }
 
+            // 2.1.3 – Hash the password
             if (errors.length === 0) {
                 const saltRounds = 10;
                 const hashedPassword = await bcryptjs.hash(password, saltRounds);
@@ -193,6 +211,7 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 /*
 // Route to handle the image upload form submission
