@@ -84,15 +84,36 @@ router.post('/register', async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
 
     // 2.1.5 & 2.1.6 – Enforce password length and complexity
-    const minLength = 8;
+    const minPasswordLength = 8;
     const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
 
-    if (password.length < minLength) {
+    if (password.length < minPasswordLength) {
         return res.status(400).redirect('/register?error=Password must be at least 8 characters long.');
     }
 
     if (!complexityRegex.test(password)) {
         return res.status(400).redirect('/register?error=Password must include uppercase, lowercase, number, and special character.');
+    }
+
+    // 2.3.2 – Validate first name length (should be between 2 to 50 characters)
+    if (firstName.length < 2 || firstName.length > 50) {
+        return res.status(400).redirect('/register?error=First name must be between 2 and 50 characters.');
+    }
+
+    // 2.3.2 – Validate last name length (should be between 2 to 50 characters)
+    if (lastName.length < 2 || lastName.length > 50) {
+        return res.status(400).redirect('/register?error=Last name must be between 2 and 50 characters.');
+    }
+
+    // 2.3.2 - Validate Email Data Range
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).redirect('/register?error=Invalid email format.');
+    }
+
+    // 2.3.3 – Validate email length (should be between 5 to 100 characters)
+    if (email.length < 5 || email.length > 100) {
+        return res.status(400).redirect('/register?error=Email must be between 5 and 100 characters.');
     }
 
     try {
@@ -121,6 +142,7 @@ router.post('/register', async (req, res) => {
         res.status(500).redirect('/register?error=Server error. Please try again.');
     }
 });
+
 
 module.exports = router;
 

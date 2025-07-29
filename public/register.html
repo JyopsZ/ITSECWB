@@ -46,6 +46,7 @@
 
                 <button type="submit">Register</button>
             </form>
+                <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
         </section>
     </main>
     
@@ -55,15 +56,14 @@
     </footer>
 
     <script>
+        // Retrieve the error message from URL
         const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
         
+        // If there's an error, display it
         if (error) {
-            const msg = document.createElement("p");
-            msg.textContent = decodeURIComponent(error);
-            msg.style.color = "red";
-            msg.style.marginTop = "10px";
-            document.getElementById("registerForm").appendChild(msg);
+            const errorMessageDiv = document.getElementById("errorMessage");
+            errorMessageDiv.textContent = decodeURIComponent(error);
         }
     </script>
 </body>
