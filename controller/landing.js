@@ -62,8 +62,11 @@ router.post('/login', async (req, res) => {
                 return res.render('studentPage', { user });
             case 'labtech':
                 return res.render('labtechPage', { user });
+            case 'webadmin':
+                return res.render('adminPage', { user });
             default:
-                return res.status(403).send('Unauthorized access');
+                //return res.status(403).send('Unauthorized access');
+                return res.redirect('/error/403'); // redirect to 403 error page if user role is not recognized
         }
 
     } catch (error) {
@@ -179,7 +182,7 @@ router.post('/passwordreset', async (req, res) => {
         if (!user) {
             return res.status(404).redirect('/passwordreset?error=Email not found.');
         }
-        res.status(200).render('../views/SecurityQuestions');
+        res.status(200).render('SecurityQuestions');
     } catch (error) {
         console.error(error);
         return res.status(500).redirect('/passwordreset?error=Server error. Please try again.');
@@ -188,12 +191,13 @@ router.post('/passwordreset', async (req, res) => {
 
 module.exports = router;
 
-/* this shit make everything go boom
-// Custom error handler for 403 Forbidden
+
 router.get('/error/403', (req, res) => {
-    res.status(403).sendFile(path.join(rootDir, 'public', 'errors', 'error.html'));
+    res.status(403).sendFile(path.join(rootDir, 'public', 'errors', '403.html'));
 });
 
+/* this shit make everything go boom
+// Custom error handler for 403 Forbidden
 // Custom error handler for 500 Internal Server Error
 router.get('/error/500', (req, res) => {
     res.status(500).sendFile(path.join(rootDir, 'public', 'errors', 'error.html'));
