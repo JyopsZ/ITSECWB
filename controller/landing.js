@@ -166,6 +166,26 @@ router.get('/AboutMe', function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/AboutMe.html"));
 });
 
+router.get('/passwordreset', function(req, res) {
+    res.sendFile(path.join(rootDir, 'public', 'passwordreset.html'));
+});
+
+router.post('/passwordreset', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).redirect('/passwordreset?error=Email not found.');
+        }
+        res.status(200).render('../views/SecurityQuestions');
+    } catch (error) {
+        console.error(error);
+        return res.status(500).redirect('/passwordreset?error=Server error. Please try again.');
+    }
+});
+
 module.exports = router;
 
 /* this shit make everything go boom
