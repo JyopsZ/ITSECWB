@@ -122,7 +122,7 @@ router.get('/LViewEditProfile' ,isAuthenticated, async (req, res) => {
 // Handling of form data to database
 router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
     try {
-        const { userId, firstName, lastName, password } = req.body; // Include userId in the request body
+        const { userId, firstName, lastName, password, email} = req.body; 
 
         // Find the user by userID
         const user = await UserModel.findOne({ userID: userId });
@@ -195,7 +195,15 @@ router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
         // Save the updated user to the database
         await user.save();
 
-        res.redirect('/labtechPage'); // Adjust this as needed
+        // Destroy session and force re-login
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error destroying session:', err);
+                return res.status(500).send('Internal Server Error');
+            }
+            res.redirect('/login');
+        });
+        
     } catch (err) {
         console.error('Error updating user information:', err);
         res.status(500).send('Internal Server Error');
