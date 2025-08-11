@@ -108,14 +108,12 @@ router.get('/labtechView/LViewOtherProfile',isAuthenticated, function(req, res) 
 router.get("/labtechPage",isAuthenticated, (req, res) => {
     // Retrieve user data from the session
     const user = req.session.user;
-    console.log(user);
     res.render('labtechPage',{user});
 });
 
 router.get('/LViewEditProfile' ,isAuthenticated, async (req, res) => {
 	const userId = req.session.user.userID;
     const userData = await UserModel.find({ userID:userId }) // select * from Post where userID == userData.userID
-    console.log(userData)
     res.render('LViewEditProfile',{userData})
 });
 
@@ -443,8 +441,9 @@ router.post('/LEditReservation', isAuthenticated, async (req, res) => {
     }
 });
 
-router.post('/updateReservationLab',isAuthenticated, async (req, res) => {
+router.post('/updateReservationLab', isAuthenticated, async (req, res) => {
     const { reservationid, editlab, editdate, edittime, editSeat } = req.body;
+    const userID = req.session.user.userID;
 
     const seatPos = editSeat.split(',').map(Number);
     
@@ -462,10 +461,8 @@ router.post('/updateReservationLab',isAuthenticated, async (req, res) => {
         { labName: editlab, date: editdate, time: edittime, seatPos: seatPos }
     );
 
-    console.log(specificReserve);
     res.render('LEditREservation2', {specificReserve, success: 'Reservation updated successfully.'});
 });
-
 /* --------------------- Display User Profile from Tooltip Press ------------------------ */
 router.post("/tooltipLab",isAuthenticated, async (req, res) => {
     try {

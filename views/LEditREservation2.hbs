@@ -24,12 +24,10 @@
     <!-- Main content section for editing reservations -->
     <main>
         <section class="edit-reservation">
-            <!-- Display error message if any -->
             {{#if error}}
                 <p style="color: red;">{{error}}</p>
             {{/if}}
             
-            <!-- Display success message if any -->
             {{#if success}}
                 <p style="color: green;">{{success}}</p>
             {{/if}}
@@ -37,7 +35,7 @@
             <form id="edit-reserveForm" action="/updateReservationLab" method="POST">
                 <!-- Reservation ID input to fetch and edit specific reservation -->
                 <label for="reservation-id">Reservation ID:</label>
-                <input type="text" id="reservationid" name="reservationid" value="{{specificReserve.reservationID}}" readonly>
+                <input type="number" id="reservationid" name="reservationid" value="{{specificReserve.reservationID}}" readonly>
 
                 <!-- Laboratory selection dropdown -->
                 <label for="editlab">Select Laboratory:</label>
@@ -52,7 +50,7 @@
                 <input type="date" id="editdate" name="editdate" value="{{specificReserve.date}}" required>
 
                 <label for="edittime">Select Time:</label>
-                <select id="edittime" name="edittime" value="{{specificReserve.time}}"required>
+                <select id="edittime" name="edittime" value="{{specificReserve.time}}" required>
                     <option value="nine" >9:00 - 9:30 AM</option>
                     <option value="nineThirty" >9:30 - 10:00 AM</option>
                     <option value="ten" >10:00 - 10:30 AM</option>
@@ -65,6 +63,99 @@
                 <button type="submit">Update Reservation</button>
             </form>
         </section>
+
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('edit-reserveForm');
+                const dateInput = document.getElementById('editdate');
+                const seatInput = document.getElementById('editSeat');
+                const labSelect = document.getElementById('editlab');
+
+                // Validate seat format based on lab
+                function validateSeat(lab, seat) {
+                    const [row, col] = seat.split(',').map(Number);
+                    
+                    switch(lab) {
+                        case 'lab1': // 5x5 grid
+                            return row >= 1 && row <= 5 && col >= 1 && col <= 5;
+                        case 'lab2': // 4x6 grid with exclusions
+                            if (row < 1 || row > 4 || col < 1 || col > 6) return false;
+                            if (row === 4 && (col === 3 || col === 4)) return false;
+                            return true;
+                        case 'lab3': // 3x8 grid with exclusions
+                            if (row < 1 || row > 3 || col < 1 || col > 8) return false;
+                            if ((row === 1 || row === 2 || row === 3) && (col === 3 || col === 6)) return false;
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+
+                form.addEventListener('submit', function(e) {
+                    const date = dateInput.value;
+                    const seat = seatInput.value;
+                    const lab = labSelect.value;
+
+                    // Validate date is not in the past
+                    if (date && new Date(date) < new Date().setHours(0,0,0,0)) {
+                        e.preventDefault();
+                        
+                        // Log invalid input
+                        fetch('/logInvalidInput', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                field: 'date',
+                                description: 'Date selected is in the past during reservation edit',
+                                submittedValue: date
+                            })
+                        });
+                        
+                        alert('Invalid date selected.');
+                        return;
+                    }
+
+                    // Validate seat format
+                    if (!/^[1-9],[1-9]$/.test(seat)) {
+                        e.preventDefault();
+                        
+                        // Log invalid input
+                        fetch('/logInvalidInput', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                field: 'seat',
+                                description: 'Invalid seat format during reservation edit',
+                                submittedValue: seat
+                            })
+                        });
+                        
+                        alert('Please enter seat in format: row,column (e.g., 1,2)');
+                        return;
+                    }
+
+                    // Invalid seat position
+                    if (!validateSeat(lab, seat)) {
+                        e.preventDefault();
+        
+                        // Log invalid input
+                        fetch('/logInvalidInput', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                field: 'seat',
+                                description: 'Invalid seat position for selected lab during reservation edit',
+                                submittedValue: seat
+                            })
+                        });
+                    
+                        alert('Invalid seat position for the selected laboratory.');
+                        return;
+                    }
+                });
+            });
+        </script>
+        
     </main>
 
     <!-- Footer section with copyright information -->
@@ -72,6 +163,4 @@
         <p>&copy; 2024 LabLink. All rights reserved.</p>
     </footer>
 </body>
-
 </html>
-
