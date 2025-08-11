@@ -23,6 +23,9 @@
     <main>
         <section class="edit-reservation">
             <h2>Edit Your Reservation</h2>
+            {{#if error}}
+                    <p style="color: red;">{{error}}</p>
+            {{/if}}
             <form id="edit-reserveForm" action="/editReservation" method="POST">
                 <!-- Reservation ID input to fetch and edit specific reservation -->
                 <label for="reservation-id">Reservation ID:</label>

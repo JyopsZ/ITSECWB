@@ -316,8 +316,6 @@ router.get('/reservations',isAuthenticated, async (req, res) => {
     }
 });
 
-let reservationIDCounter = 1018;
-
 // Route to create a new reservation
 router.post('/reservation', isAuthenticated, async (req, res) => {
     const { labName, seatRow, seatCol, date, time, reserver } = req.body;
@@ -330,15 +328,13 @@ router.post('/reservation', isAuthenticated, async (req, res) => {
             return res.status(500).redirect('/reservation');
         }
 
-        const reservationID = reservationIDCounter++;
 
         const newReserve = new ReservationModel({
             labName,
             seatPos,
             date,
             time,
-            reserver,
-            reservationID
+            reserver
         });
 
         await newReserve.save();
@@ -400,8 +396,7 @@ router.post('/editReservation',isAuthenticated, async (req, res) => {
             });
             await invalidInput.save();
             
-            alert('Invalid reservation ID. Please try again.');
-            return res.render('editReservation');
+            return res.render('editReservation', { error: 'Invalid reservation ID. Please try again.' });
         }
         
         if (specificReserve.reserver !== fullName) {
@@ -412,11 +407,9 @@ router.post('/editReservation',isAuthenticated, async (req, res) => {
             });
             await accessViolation.save();
             
-            alert('Invalid reservation ID. Please try again.');
-            return res.render('editReservation');
+            return res.render('editReservation', { error: 'Invalid reservation ID. Please try again.' });
         }
         
-        console.log(specificReserve);
         res.render('EditReservation2', {specificReserve});
     } catch (error) {
         console.error('Error in editReservation:', error);

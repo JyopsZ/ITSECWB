@@ -5,6 +5,7 @@ var router = express.Router();
 var path = require('path');
 const UserModel = require('../model/user');
 const ReservationModel = require('../model/reservation');
+const InputValidationModel = require('../model/inputValidation');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -386,7 +387,6 @@ router.get('/LReservations',isAuthenticated, async (req, res) => {
 router.post('/LReservation',isAuthenticated, async (req, res) => {
     const { labName, seatRow, seatCol, date, time, reserver } = req.body;
     const seatPos = [parseInt(seatRow), parseInt(seatCol)];
-    const reservationID = Math.floor(Math.random() * 10000); // Generate a random reservation ID
 
     try {
         // Check if the seat is already taken
@@ -400,8 +400,7 @@ router.post('/LReservation',isAuthenticated, async (req, res) => {
             seatPos,
             date,
             time,
-            reserver,
-            reservationID
+            reserver
         });
 
         await newReserve.save();
@@ -417,11 +416,31 @@ router.get('/LEditReservation',isAuthenticated, async (req, res) => {
     res.render('LEditReservation');
 });
 
-router.post('/LEditReservation',isAuthenticated, async (req, res) => {
+router.post('/LEditReservation', isAuthenticated, async (req, res) => {
     const { reservId } = req.body;
-    const specificReserve = await ReservationModel.findOne({ reservationID: reservId });
-    console.log(specificReserve);
-    res.render('LEditREservation2', {specificReserve});
+    const userID = req.session.user.userID;
+
+    try {
+        const specificReserve = await ReservationModel.findOne({ reservationID: reservId }); // get reservation data from database
+        
+        if (!specificReserve) {
+            // Log invalid input for non-existing reservation ID
+            const invalidInput = new InputValidationModel({
+                userID,
+                field: 'reservationID',
+                description: 'Attempted to edit non-existing reservation ID',
+                submittedValue: reservId
+            });
+            await invalidInput.save();
+            
+            return res.render('LEditReservation', { error: 'Invalid reservation ID. Please try again.' });
+        }
+        
+        res.render('LEditREservation2', {specificReserve});
+    } catch (error) {
+        console.error('Error in LEditReservation:', error);
+        res.status(500).render('LEditReservation', { error: 'Server error occurred.' });
+    }
 });
 
 router.post('/updateReservationLab',isAuthenticated, async (req, res) => {
