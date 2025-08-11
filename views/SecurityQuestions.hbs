@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset - Security Question</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <img src="images/logo.png" id="logo">
+        <h1>Password Reset</h1>
+        <nav>
+            <ul>
+                <li><a href="passwordreset">Back</a></li>
+                <li><a href="login">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="password-reset-form">
+            <h2>Answer Security Question</h2>
+            <p><strong>Email:</strong> {{email}}</p>
+            
+            <form id="securityForm" action="/verify-security" method="POST">
+                <label for="question">Security Question:</label>
+                <input type="text" id="question" name="question" value="{{question}}" readonly>
+                
+                <label for="answer">Your Answer:</label>
+                <input type="text" id="answer" name="answer" required placeholder="Enter your answer">
+                
+                <label for="newPassword">New Password:</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+                <p class="password-requirements">Password requires:</p>
+                <ul class="password-requirements">
+                    <li>8 characters minimum</li>
+                    <li>Uppercase and lowercase letters</li>
+                    <li>At least one number</li>
+                    <li>At least one special character</li>
+                    <li>Must not be a previously used password</li>
+                </ul>
+                
+                <label for="confirmPassword">Confirm New Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+                <button type="submit">Reset Password</button>
+            </form>
+
+            {{#if error}}
+                <p id="errorMessage" style="color: red;">{{error}}</p>
+            {{/if}}
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Client-side password confirmation validation
+        document.getElementById('securityForm').addEventListener('submit', function(e) {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
