@@ -5,6 +5,8 @@ var router = express.Router();
 var path = require('path');
 const UserModel = require('../model/user');
 const ReservationModel = require('../model/reservation');
+const InputValidationModel = require('../model/inputValidation');
+const AccessControlModel = require('../model/accessControl');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -380,13 +382,51 @@ router.get('/editReservation',isAuthenticated, async (req, res) => {
 
 router.post('/editReservation',isAuthenticated, async (req, res) => {
     const { reservId } = req.body;
-    const specificReserve = await ReservationModel.findOne({ reservationID: reservId });
-    console.log(specificReserve);
-    res.render('EditReservation2', {specificReserve});
+    const userID = req.session.user.userID;
+
+    const user = await UserModel.findOne({ userID: userID }); // get user data from database
+    const fullName = `${user.firstName} ${user.lastName}`;
+
+    try {
+        const specificReserve = await ReservationModel.findOne({ reservationID: reservId }); // get reservation data from database
+        
+        if (!specificReserve) {
+            // Log invalid input for non-existing reservation ID
+            const invalidInput = new InputValidationModel({
+                userID,
+                field: 'reservationID',
+                description: 'Attempted to edit non-existing reservation ID',
+                submittedValue: reservId
+            });
+            await invalidInput.save();
+            
+            alert('Invalid reservation ID. Please try again.');
+            return res.render('editReservation');
+        }
+        
+        if (specificReserve.reserver !== fullName) {
+            // Log access control violation for accessing other user's reservation
+            const accessViolation = new AccessControlModel({
+                userID,
+                description: 'Attempted to edit reservation belonging to another user'
+            });
+            await accessViolation.save();
+            
+            alert('Invalid reservation ID. Please try again.');
+            return res.render('editReservation');
+        }
+        
+        console.log(specificReserve);
+        res.render('EditReservation2', {specificReserve});
+    } catch (error) {
+        console.error('Error in editReservation:', error);
+        res.status(500).render('editReservation', { error: 'Server error occurred.' });
+    }
 });
 
 router.post('/updateReservation',isAuthenticated, async (req, res) => {
     const { reservationid, editlab, editdate, edittime, editSeat } = req.body;
+    const userID = req.session.user.userID;
 
     const seatPos = editSeat.split(',').map(Number);
     
@@ -394,6 +434,16 @@ router.post('/updateReservation',isAuthenticated, async (req, res) => {
     const existingReservation = await ReservationModel.findOne({ labName: editlab, date: editdate, time: edittime, seatPos: seatPos });
     
     if (existingReservation) {
+
+        // Log invalid input for conflicting reservation
+        const invalidInput = new InputValidationModel({
+            userID,
+            field: 'reservationConflict',
+            description: 'Attempted to update reservation to an already occupied seat',
+            submittedValue: `${editlab}, ${editdate}, ${edittime}, ${editSeat}`
+        });
+        await invalidInput.save();
+
         // If there is a clash, inform the user
         return res.render('EditReservation2', {specificReserve: await ReservationModel.findOne({ reservationID: reservationid }), error: 'The selected date and lab are already reserved.'});
     }
@@ -472,7 +522,7 @@ router.post("/tooltip",isAuthenticated, async (req, res) => {
 /* --------------------- Student Check Seat Availability ------------------------ */
 router.get('/viewAvailable',isAuthenticated, function(req, res) {
     const user = req.session.user;
-    res.render('viewAvailable');
+    res.render('viewAvailable', {user: user});
 });
 
 // Route to fetch reservations
@@ -484,6 +534,28 @@ router.get('/viewSeats', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Error fetching seats');
+    }
+});
+
+/* --------------------- Logging ------------------------ */
+// route for logging invalid inputs, userID is taken from session, the rest are supplied by specific input fields.
+router.post('/logInvalidInput', isAuthenticated, async (req, res) => { 
+    try {
+        const { field, description, submittedValue } = req.body;
+        const userID = req.session.user.userID; // current userID
+
+        const invalidInput = new InputValidationModel({
+            userID,
+            field,
+            description,
+            submittedValue
+        });
+
+        await invalidInput.save();
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Error logging invalid input:', error);
+        res.status(500).json({ error: 'Failed to log invalid input' });
     }
 });
 

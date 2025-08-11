@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
             case 'labtech':
                 return res.render('labtechPage', { user });
             case 'webadmin':
-                return res.render('adminPage', { user });
+                return res.render('WadminPage', { user });
             default:
                 //return res.status(403).send('Unauthorized access');
                 return res.redirect('/error/403'); // redirect to 403 error page if user role is not recognized

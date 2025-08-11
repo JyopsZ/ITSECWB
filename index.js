@@ -27,6 +27,10 @@ const Reservation = require("./model/reservation")
 const Profile = require("./model/profile")
 const User = require("./model/user")
 
+const InputValidation = require("./model/inputValidation")
+const AuthAttempts = require("./model/authAttempts")
+const AccessControl = require("./model/accessControl")
+
 app.use(express.json()) // use json
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());

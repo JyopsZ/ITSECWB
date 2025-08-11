@@ -83,6 +83,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const date = dateInput.value;
         const time = timeSelect.value;
 
+        if (date && new Date(date) < new Date().setHours(0,0,0,0)) {
+        // Log invalid input
+        fetch('/logInvalidInput', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                field: 'date',
+                description: 'Date selected is in the past',
+                submittedValue: date
+            })
+        });
+        
+        alert('Please select a valid date.');
+        dateInput.value = '';
+        return;
+    }
+
         if (labName && date && time) {
             fetch(`/reservations?labName=${labName}&date=${date}&time=${time}`)
                 .then(response => response.json())
@@ -100,26 +117,9 @@ document.addEventListener('DOMContentLoaded', function () {
             seat.classList.add("taken");
             const tooltip = document.createElement("span");
             tooltip.classList.add("tooltiptext");
+            tooltip.textContent = `Reserved by: ${takenSeat.reserver}`;
             seat.classList.add("tooltip");
-            
-            const reserverForm = document.createElement("form");
-            reserverForm.method = "POST";
-            reserverForm.action = "/tooltip";
-            
-            const reserverInput = document.createElement("input");
-            reserverInput.type = "hidden";
-            reserverInput.name = "userName";
-            reserverInput.value = takenSeat.reserver;
-            
-            const reserverButton = document.createElement("button");
-            reserverButton.type = "submit";
-            reserverButton.textContent = takenSeat.reserver;
-            reserverButton.classList.add("link");
-            
-            reserverForm.appendChild(reserverInput);
-            reserverForm.appendChild(reserverButton);
-            tooltip.appendChild(reserverForm);
-            seat.appendChild(tooltip);
+            seat.appendChild(tooltip); // simplified tooltip to only display name of reserver, prev code showed full profile
         }
         seat.addEventListener("click", function() {
             if (!seat.classList.contains("taken")) {

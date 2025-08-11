@@ -16,9 +16,5 @@ function isAuthenticated(req, res, next) {
     res.redirect('/login'); // Redirect to login page if not authenticated
   }
 
-//Student studentPage
-router.get('/adminView/adminPage', isAuthenticated, function(req, res) {
-    res.sendFile(path.join(rootDir, 'public', 'adminView', 'adminPage.html'));
-});
 
 module.exports = router;

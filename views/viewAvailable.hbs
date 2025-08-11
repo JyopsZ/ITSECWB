@@ -72,6 +72,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const date = dateInput.value;
         const time = timeSelect.value;
 
+        if (date && new Date(date) < new Date().setHours(0,0,0,0)) {
+        // Log invalid input
+        fetch('/logInvalidInput', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                field: 'date',
+                description: 'Date selected is in the past',
+                submittedValue: date
+            })
+        });
+        
+        alert('Please select a valid date.');
+        dateInput.value = '';
+        return;
+    }
+
         if (labName && date && time) {
             fetch(`/viewSeats?labName=${labName}&date=${date}&time=${time}`)
                 .then(response => response.json())
