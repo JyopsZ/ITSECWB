@@ -195,7 +195,7 @@ router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
         // Save the updated user to the database
         await user.save();
 
-        // Destroy session and force re-login
+        // 2.1.13 Force re-login after critical operations such as password change etc.
         req.session.destroy((err) => {
             if (err) {
                 console.error('Error destroying session:', err);
