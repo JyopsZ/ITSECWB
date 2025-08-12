@@ -351,3 +351,27 @@ footer {
         width: calc(100% - 40px);
     }
 }
+
+.white-box {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: auto;
+  display: inline-block;
+}
+
+.white-box-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.white-box-table th, .white-box-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.white-box-table th {
+  background-color: #f9f9f9;
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Homepage</h1>
+        <nav>
+            <ul>
+                <li><a href="/WadminPage">Home</a></li>
+                <li><a href="../logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+  <!-- Main Content -->
+  <main>
+  <section class="white-box">
+    <h2>Auth Attempts Logs</h2>
+    <table class="white-box-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#authAttemptsLogs}}
+          <tr>
+            <td>{{email}}</td>
+            <td>{{status}}</td>
+            <td>{{timestamp}}</td>
+          </tr>
+        {{/authAttemptsLogs}}
+      </tbody>
+    </table>
+  </section>
+</main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 LabLink. All rights reserved.</p>
+  </footer>
+</body>
+</html>

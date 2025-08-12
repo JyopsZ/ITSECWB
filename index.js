@@ -61,11 +61,13 @@ app.use('/user', userRoutesLab);
 const landingRoutes = require('./controller/landing')
 const studentRoutes = require('./controller/student')
 const labtechRoutes = require('./controller/labtech')
+const webadminRoutes = require('./controller/webadmin')
 
 /*  Importing of Routes From Controller Folder  */
 app.use('/', landingRoutes);
 app.use('/', studentRoutes);
 app.use('/', labtechRoutes);
+app.use('/', webadminRoutes);
 
 /* Handlebars */
 var hbs = require('hbs')
