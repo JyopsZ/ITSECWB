@@ -2,36 +2,22 @@
 const mongoose = require('mongoose');
 
 const passwordHistorySchema = new mongoose.Schema({
-    userID: { 
-        type: Number, 
-        required: true,
-        ref: 'User'
-    },
-    hashedPassword: { 
-        type: String, 
-        required: true 
-    },
-    createdAt: { 
-        type: Date, 
-        default: Date.now 
-    }
+    userID: { type: Number, required: true,ref: 'User'},
+    hashedPassword: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
 });
 
-// Index for faster queries
 passwordHistorySchema.index({ userID: 1, createdAt: -1 });
 
-// Keep only last 12 passwords per user (configurable)
 passwordHistorySchema.statics.addPasswordHistory = async function(userID, hashedPassword) {
     const MAX_PASSWORD_HISTORY = 12;
     
     try {
-        // Add new password to history
         await this.create({
             userID: userID,
             hashedPassword: hashedPassword
         });
-        
-        // Remove old passwords beyond the limit
+    
         const passwords = await this.find({ userID })
             .sort({ createdAt: -1 })
             .skip(MAX_PASSWORD_HISTORY);
@@ -46,12 +32,11 @@ passwordHistorySchema.statics.addPasswordHistory = async function(userID, hashed
     }
 };
 
-// Check if password was used before
+// Tracker if password was already reused, thus this msut be prevented.
 passwordHistorySchema.statics.isPasswordUsedBefore = async function(userID, plainTextPassword) {
     const bcryptjs = require('bcryptjs');
     
     try {
-        // Make sure we have valid inputs
         if (!userID || !plainTextPassword) {
             console.error('Invalid parameters for password history check:', { userID, plainTextPassword: !!plainTextPassword });
             return false;
@@ -63,7 +48,6 @@ passwordHistorySchema.statics.isPasswordUsedBefore = async function(userID, plai
         
         for (const oldPasswordRecord of passwordHistory) {
             try {
-                // Ensure we have valid hashed password
                 if (!oldPasswordRecord.hashedPassword || typeof oldPasswordRecord.hashedPassword !== 'string') {
                     console.warn('Invalid hashed password in history:', oldPasswordRecord);
                     continue;
@@ -76,7 +60,7 @@ passwordHistorySchema.statics.isPasswordUsedBefore = async function(userID, plai
                 }
             } catch (compareError) {
                 console.error('Error comparing password:', compareError);
-                continue; // Skip this comparison and continue with others
+                continue;
             }
         }
         
@@ -85,11 +69,11 @@ passwordHistorySchema.statics.isPasswordUsedBefore = async function(userID, plai
         
     } catch (error) {
         console.error('Error checking password history:', error);
-        return false; // In case of error, allow password change but log the issue
+        return false;
     }
 };
 
-// Get the most recent password change date for a user
+// For tracking the password change date
 passwordHistorySchema.statics.getLastPasswordChangeDate = async function(userID) {
     try {
         const lastPassword = await this.findOne({ userID })
@@ -100,6 +84,64 @@ passwordHistorySchema.statics.getLastPasswordChangeDate = async function(userID)
         console.error('Error getting last password change date:', error);
         return null;
     }
+};
+
+// For checking if the user can change the password if its been a day old (thank you stackoverflow)
+passwordHistorySchema.statics.canChangePassword = async function(userID) {
+    try {
+        const lastChangeDate = await this.getLastPasswordChangeDate(userID);
+        
+        if (!lastChangeDate) {
+            return true; 
+        }
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        return lastChangeDate <= oneDayAgo;
+    } catch (error) {
+        console.error('Error checking if user can change password:', error);
+        return false;
+    }
+
+    /* If we wanna test without having to wait 24 hours
+    try {
+        return true;
+    } catch (error) {
+        console.error('Error checking if user can change password:', error);
+        return false;
+    }
+     */
+};
+
+// Get time until user can change password again
+passwordHistorySchema.statics.getTimeUntilNextPasswordChange = async function(userID) {
+    try {
+        const lastChangeDate = await this.getLastPasswordChangeDate(userID);
+        
+        if (!lastChangeDate) {
+            return 0;
+        }
+        
+        const oneDayFromLastChange = new Date(lastChangeDate.getTime() + 24 * 60 * 60 * 1000);
+        const now = new Date();
+        
+        if (now >= oneDayFromLastChange) {
+            return 0;
+        }
+        
+        return oneDayFromLastChange - now;
+    } catch (error) {
+        console.error('Error calculating time until next password change:', error);
+        return -1;
+    }
+
+    /*    If we wanna test without having to wait 24 hours
+    try {
+        
+        return 0;
+    } catch (error) {
+        console.error('Error calculating time until next password change:', error);
+        return -1;
+    }
+     */
 };
 
 const PasswordHistory = mongoose.model('PasswordHistory', passwordHistorySchema);

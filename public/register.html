@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,6 @@
             <ul>
                 <li><a href="index">Back</a></li>
                 <li><a href="login">Login</a></li>
-                <li><a href ="test">Test</a></li>
             </ul>
         </nav>
     </header>
@@ -38,20 +37,23 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
                 <p>Password requires:</p>
-                <li>8 characters minimum</li>
-                <li>Uppercase, Lowercase</li>
-                <li>Number, and Special character</li>
-                <br>
+                <ul>
+                    <li>8 characters minimum</li>
+                    <li>Uppercase, Lowercase</li>
+                    <li>Number, and Special character</li>
+                </ul>
 
-                <label for="question">Choose a Security Question:</label> <!-- Not yet implemented in database -->
-                <select id="question">
-                <option value="volvo">What is the city you were born in?</option>
-                <option value="saab">What is your sibling's nickname?</option>
-                <option value="opel">What was the first concert you attended?</option>
+                <label for="question">Choose a Security Question:</label>
+                <select id="question" name="question" required>
+                    <option value="">Select a question...</option>
+                    <option value="What is your sibling's nickname?">What is your sibling's nickname?</option>
+                    <option value="What was the first concert you attended?">What was the first concert you attended?</option>
+                    <option value="What was the name of your first pet?">What was the name of your first pet?</option>
                 </select>
 
-                <label for="answer">Answer:</label> <!-- Not yet implemented in database -->
-                <input type="answer" id="answer" name="answer" required>
+                <label for="answer">Answer:</label>
+                <input type="text" id="answer" name="answer" required placeholder="Enter your answer (case insensitive)">
+
                 <label for="role">I am a:</label>
                 <select id="role" name="role" required>
                     <option value="student">Student</option>
@@ -60,7 +62,7 @@
 
                 <button type="submit">Register</button>
             </form>
-                <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
+            <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
         </section>
     </main>
     
@@ -73,8 +75,7 @@
         // Retrieve the error message from URL
         const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
-        
-        // If there's an error, display it
+
         if (error) {
             const errorMessageDiv = document.getElementById("errorMessage");
             errorMessageDiv.textContent = decodeURIComponent(error);

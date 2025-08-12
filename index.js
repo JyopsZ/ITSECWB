@@ -26,6 +26,7 @@ const port = envPort || 3000;
 const Reservation = require("./model/reservation")
 const Profile = require("./model/profile")
 const User = require("./model/user")
+const PasswordHistory = require("./model/password")
 
 app.use(express.json()) // use json
 app.use(bodyParser.urlencoded({extended: false}));
