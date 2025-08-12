@@ -84,3 +84,10 @@ hbs.registerHelper('formatTimestamp', function(timestamp) {
 var server = app.listen(port, function() {
 	console.log("listening to port 3000...");
 });
+
+const rootDir = __dirname;
+
+// Catch-all for unmatched routes (404)
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(rootDir, 'public', 'errors', '404.html'));
+});
