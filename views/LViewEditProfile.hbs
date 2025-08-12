@@ -22,14 +22,6 @@
                 <section class="edit-section">
                     <h2 class="edit-profile">Edit Your Profile</h2>
 
-                    {{#if errors}}
-                        <div class="error-messages">
-                            {{#each errors}}
-                                <p style="color: red; text-align: center;">{{this}}</p>
-                            {{/each}}
-                        </div>
-                    {{/if}}
-
                     <form id="editForm" action="/editInfolabtech" method="POST" enctype="multipart/form-data">
                         {{#each userData}}
                         <input type="hidden" id="userId" name="userId" value="{{this.userID}}">

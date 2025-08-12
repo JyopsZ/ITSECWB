@@ -21,7 +21,7 @@
         <div class="section-container">
             <section class="edit-section">
                 <h2 class="edit-profile">Edit Your Profile</h2>
-                <form id="editForm" action="/user/editInfo" method="POST" enctype="multipart/form-data">
+                <form id="editForm" action="/editInfo" method="POST" enctype="multipart/form-data">
                     {{#each userData}}
                     <div class="image-container">
                         <!-- Display user image -->
@@ -53,9 +53,6 @@
                     <input type="text" id="lastName" name="lastName" value='{{this.lastName}}'
                      pattern=".{2,50}" title="Last name must be between 2 and 50 characters.">
 
-                    <!-- Password input field -->
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" value='{{this.password}}'>
                     {{/each}}
 
                     {{#if errors}}

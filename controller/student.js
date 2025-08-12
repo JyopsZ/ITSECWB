@@ -123,9 +123,10 @@ router.get('/ViewEditProfile' ,isAuthenticated, async (req, res) => {
 });
 
 // Handling of form data to database
+// Handling of form data to database
 router.post('/editInfo', isAuthenticated, async (req, res) => {
     try {
-        const { firstName, lastName, password, email } = req.body;
+        const { firstName, lastName } = req.body;
 
         const userId = req.session.user.userID;
         const user = await UserModel.findOne({ userID: userId });
@@ -142,38 +143,25 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
         // 2.3.2 – Validate first name length (should be between 2 to 50 characters)
         if (firstName.length < 2 || firstName.length > 50) {
             errors.push('First name must be between 2 and 50 characters.');
+            const invalidInput = new InputValidationModel({
+                userID: req.session.user.userID,
+                field: 'firstName',
+                description: 'Invalid first name length',
+                submittedValue: firstName
+            });
+            await invalidInput.save();
         }
 
         // 2.3.2 – Validate last name length (should be between 2 to 50 characters)
         if (lastName.length < 2 || lastName.length > 50) {
             errors.push('Last name must be between 2 and 50 characters.');
-        }
-
-        // 2.3.2 - Validate Email Data Range
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(email)) {
-            errors.push('Please provide a valid email address.');
-        }
-
-        // 2.1.5 & 2.1.6 – Enforce password length and complexity
-        if (password) {
-            const minLength = 8;
-            const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
-
-            if (password.length < minLength) {
-                errors.push('Password must be at least 8 characters long.');
-            }
-
-            if (!complexityRegex.test(password)) {
-                errors.push('Password must include uppercase, lowercase, number, and special character.');
-            }
-
-            // 2.1.3 – Hash the password
-            if (errors.length === 0) {
-                const saltRounds = 10;
-                const hashedPassword = await bcryptjs.hash(password, saltRounds);
-                user.password = hashedPassword;
-            }
+            const invalidInput = new InputValidationModel({
+                userID: req.session.user.userID,
+                field: 'lastName',
+                description: 'Invalid last name length',
+                submittedValue: lastName
+            });
+            await invalidInput.save();
         }
 
         if (errors.length > 0) {
@@ -183,26 +171,13 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
             });
         }
 
-        if (req.files && req.files.imageUpload) {
-            const imageFile = req.files.imageUpload;
-            const uploadPath = path.join(rootDir, 'public', 'images', `${Date.now()}-${imageFile.name}`);
-            imageFile.mv(uploadPath, (err) => {
-                if (err) {
-                    console.error('Error uploading file:', err);
-                    return res.status(500).send('Internal Server Error');
-                }
-            });
-            user.image = path.basename(uploadPath);
-        }
-
         await user.save();
 
         req.session.user = {
             userID: user.userID,
             firstName: user.firstName,
             lastName: user.lastName,
-            password: user.password,
-            image: user.image
+            email: user.email
         };
 
         res.redirect('/studentPage');
