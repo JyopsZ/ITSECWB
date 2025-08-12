@@ -24,6 +24,7 @@ This web application allows users to reserve slots in a computer laboratory. Use
 	npm install mongoose-sequence
 	npm install bcrypt
 	npm install dotenv --save-dev
+ 	npm install moment-timezone
 	npm init -y
 	node index.js
 
