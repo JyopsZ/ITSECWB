@@ -86,9 +86,8 @@ router.get('/labtechView/searchEditProfile',isAuthenticated, function(req, res) 
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'searchEditProfile.html'));
 });
 
-router.get('/labtechView/LsearchOtherProfile',isAuthenticated, function(req, res) {
-	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LsearchOtherProfile.html"));
-    res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LsearchOtherProfile.html'));
+router.get('/labtechView/LsearchOtherProfile', isAuthenticated, function(req, res) {
+    res.render('LsearchOtherProfile'); // modified to be .hbs file.
 });
 
 
@@ -320,31 +319,22 @@ router.post("/findUser2",isAuthenticated, async (req, res) => {
 });
 
 /* --------------------- SEARCH USERS for labtechs ------------------------ */
-router.post("/viewUserLab",isAuthenticated, async (req, res) => {
-
+router.post("/viewUserLab", isAuthenticated, async (req, res) => {
     try {
         const { userName } = req.body;
-        const lowerCaseName = userName.toLowerCase();
-
-        let filter = {};
-
-        const names = lowerCaseName.trim().split(' ');
-        
-        if (names.length === 2) {
-            filter = {
-                $or: [
-                    { firstName: new RegExp(names[0], 'i'), lastName: new RegExp(names[1], 'i') },
-                    { firstName: new RegExp(names[1], 'i'), lastName: new RegExp(names[0], 'i') }
-                ]
-            };
-        } else if (names.length === 1) {
-            filter = {
-                $or: [
-                    { firstName: new RegExp(names[0], 'i') },
-                    { lastName: new RegExp(names[0], 'i') }
-                ]
-            };
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(userName)) {
+            const invalidInput = new InputValidationModel({
+                userID: req.session.user.userID,
+                field: 'email',
+                description: 'Invalid email address format',
+                submittedValue: userName
+            });
+            await invalidInput.save();
+            return res.status(400).render('LViewOtherProfile', { error: 'Invalid email address' });
         }
+
+        const filter = { email: userName };
 
         const users = await UserModel.find(filter);
 
@@ -353,7 +343,6 @@ router.post("/viewUserLab",isAuthenticated, async (req, res) => {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
-
 });
 
 /* --------------------- RESERVATION for a student (labtech side) ------------------------ */
