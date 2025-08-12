@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search/View Students Profile - LabTech</title>
     <link rel="stylesheet" href="../css/styles.css">
+</head>
 <body>
     <!-- Header section containing the title and navigation menu -->
     <header>
@@ -21,6 +22,12 @@
         <div class="section-container">
             <section class="search-form">
                 <h2>Search for User</h2>
+                {{#if error}}
+                    <p style="color: red;">{{error}}</p>
+                {{/if}}
+                {{#if success}}
+                    <p style="color: green;">{{success}}</p>
+                {{/if}}
                 <form action="/findUser2" method="POST">
                     <!-- User Search -->
                     Enter Name to Find User:

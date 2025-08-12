@@ -93,8 +93,8 @@ router.get('/labtechView/LsearchOtherProfile', isAuthenticated, function(req, re
 
 // Lab Tech LViewEditProfile
 router.get('/labtechView/LsearchEditProfile',isAuthenticated, function(req, res) {
-	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LsearchEditProfile.html"));
-    res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LsearchEditProfile.html'));
+	
+    res.render('LsearchEditProfile'); // modified to be .hbs file.
 });
 
 router.get('/labtechView/LViewOtherProfile',isAuthenticated, function(req, res) {
@@ -116,11 +116,10 @@ router.get('/LViewEditProfile' ,isAuthenticated, async (req, res) => {
     res.render('LViewEditProfile',{userData})
 });
 
-// editing of user profile with picture
 // Handling of form data to database
-router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
+router.post('/editInfolabtech',isAuthenticated, async (req, res) => {
     try {
-        const { userId, firstName, lastName, password } = req.body; // Include userId in the request body
+        const { userId, firstName, lastName, email, password } = req.body; // Include userId in the request body
 
         // Find the user by userID
         const user = await UserModel.findOne({ userID: userId });
@@ -159,12 +158,41 @@ router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
             errors.push('Password must include uppercase, lowercase, number, and special character.');
         }
 
+        if (firstName.length < 2 || firstName.length > 50) {
+            errors.push('First name must be between 2 and 50 characters.');
+            const invalidInput = new InputValidationModel({
+                userID: req.session.user.userID,
+                field: 'firstName',
+                description: 'Invalid first name length',
+                submittedValue: firstName
+            });
+            await invalidInput.save();
+        }
+
+        if (lastName.length < 2 || lastName.length > 50) {
+            errors.push('Last name must be between 2 and 50 characters.');
+            const invalidInput = new InputValidationModel({
+                userID: req.session.user.userID,
+                field: 'lastName',
+                description: 'Invalid last name length',
+                submittedValue: lastName
+            });
+            await invalidInput.save();
+        }
+
         if (errors.length > 0) {
+            const invalidInput = new InputValidationModel({
+                userID: req.session.user.userID,
+                field: 'password',
+                description: 'Invalid password format',
+                submittedValue: password
+            });
+            await invalidInput.save();
             return res.status(400).render('LViewEditProfile', {
                 userData: [user],
-                errors
+                errors: errors
             });
-        }
+}
 
         // Update the user's information
         user.firstName = firstName;
@@ -196,54 +224,6 @@ router.post('/editUserProfileWithImage',isAuthenticated, async (req, res) => {
         res.redirect('/labtechPage'); // Adjust this as needed
     } catch (err) {
         console.error('Error updating user information:', err);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-// Handling of form data to database
-router.post('/editInfolabtech',isAuthenticated, async (req, res) => {
-    try {
-        const { id, firstName, lastName, password } = req.body;
-
-        // Find the user by userID
-        const userId = id;
-        const user = await UserModel.findOne({ userID: userId });
-        
-        // Password policy
-        const minLength = 8;
-        const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
-
-        const errors = [];
-
-        if (password.length < minLength) {
-            errors.push('Password must be at least 8 characters long.');
-        }
-
-        if (!complexityRegex.test(password)) {
-            errors.push('Password must include uppercase, lowercase, number, and special character.');
-        }
-
-        if (errors.length > 0) {
-            return res.status(400).render('LViewEditProfile', {
-                userData: [user],
-                error: errors.join(' ')
-            });
-        }
-
-        // Update the user's information
-        user.firstName = firstName;
-        user.lastName = lastName;
-
-        const saltRounds = 10;
-        const hashedPassword = await bcryptjs.hash(password, saltRounds);
-        user.password = hashedPassword;
-
-        // Save the updated user to the database
-        await user.save();
-
-        res.redirect('/labtechPage');
-    } catch (err) {
-        console.error(err);
         res.status(500).send('Internal Server Error');
     }
 });
@@ -286,29 +266,27 @@ router.post('/editImgLabtech',isAuthenticated, async (req, res) => {
 });
 
 /* --------------------- EDIT USERS for labtechs ------------------------ */
-router.post("/findUser2",isAuthenticated, async (req, res) => {
+router.post("/findUser2", isAuthenticated, async (req, res) => {
     try {
         const { userName } = req.body;
-        const lowerCaseName = userName.toLowerCase();
-
-        const names = lowerCaseName.trim().split(' ');
-
-        if (names.length !== 2) {
-            return res.status(404).redirect('/labtechView/searchEditProfile?error=Please Enter First & Last Name.');
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(userName)) {
+            const invalidInput = new InputValidationModel({
+                userID: req.session.user.userID,
+                field: 'email',
+                description: 'Invalid email address format',
+                submittedValue: userName
+            });
+            await invalidInput.save();
+            return res.status(400).render('LsearchEditProfile', { error: 'Invalid email address format' });
         }
 
-        const filter = {
-            $or: [
-                { firstName: new RegExp(names[0], 'i'), lastName: new RegExp(names[1], 'i') },
-                { firstName: new RegExp(names[1], 'i'), lastName: new RegExp(names[0], 'i') }
-            ]
-        };
+        const filter = { email: userName };
 
         const users = await UserModel.find(filter);
 
         if (users.length === 0) {
-            
-            return res.status(404).redirect('/labtechView/searchEditProfile?error=User not found.');
+            return res.status(400).render('LsearchEditProfile', { error: 'User not found' });
         }
 
         res.render('LViewEditProfile', { userData: users });
@@ -331,7 +309,7 @@ router.post("/viewUserLab", isAuthenticated, async (req, res) => {
                 submittedValue: userName
             });
             await invalidInput.save();
-            return res.status(400).render('LViewOtherProfile', { error: 'Invalid email address' });
+            return res.status(400).render('LViewOtherProfile', { error: 'Invalid email address format' });
         }
 
         const filter = { email: userName };
