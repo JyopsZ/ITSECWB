@@ -357,6 +357,13 @@ router.post('/verify-security', async (req, res) => {
         // Check if password was used before
         const isPasswordReused = await PasswordHistory.isPasswordUsedBefore(user.userID, newPassword);
         if (isPasswordReused) {
+            const invalidInput = new InputValidationModel({
+                userID: user.userID,
+                field: 'password',
+                description: 'User tried to reuse a previous password',
+                submittedValue: newPassword
+            });
+            await invalidInput.save();
             return res.render('SecurityQuestions', {
                 email: user.email,
                 question: user.securityQuestion,

@@ -44,7 +44,7 @@ passwordHistorySchema.statics.isPasswordUsedBefore = async function(userID, plai
 
         const passwordHistory = await this.find({ userID }).sort({ createdAt: -1 });
         
-        console.log(`Checking password history for user ${userID}. Found ${passwordHistory.length} previous passwords.`);
+        //console.log(`Checking password history for user ${userID}. Found ${passwordHistory.length} previous passwords.`);
         
         for (const oldPasswordRecord of passwordHistory) {
             try {
@@ -55,7 +55,7 @@ passwordHistorySchema.statics.isPasswordUsedBefore = async function(userID, plai
 
                 const isMatch = await bcryptjs.compare(plainTextPassword, oldPasswordRecord.hashedPassword);
                 if (isMatch) {
-                    console.log('Password reuse detected for user:', userID);
+                    //console.log('Password reuse detected for user:', userID);
                     return true;
                 }
             } catch (compareError) {
@@ -64,7 +64,7 @@ passwordHistorySchema.statics.isPasswordUsedBefore = async function(userID, plai
             }
         }
         
-        console.log('No password reuse detected for user:', userID);
+        //console.log('No password reuse detected for user:', userID);
         return false;
         
     } catch (error) {
