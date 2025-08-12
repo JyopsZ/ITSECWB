@@ -41,19 +41,21 @@
                 <li>Number, and Special character</li>
                 <br>
 
-                <label for="question">Choose a Security Question:</label> <!-- Not yet implemented in database -->
-                <select id="question">
-                <option value="volvo">What is the city you were born in?</option>
-                <option value="saab">What is your sibling's nickname?</option>
-                <option value="opel">What was the first concert you attended?</option>
+                <label for="question">Choose a Security Question:</label>
+                <select id="question" name="question" required>
+                    <option value="">Select a question...</option>
+                    <option value="What is your sibling's nickname?">What is your sibling's nickname?</option>
+                    <option value="What was the first concert you attended?">What was the first concert you attended?</option>
+                    <option value="What was the name of your first pet?">What was the name of your first pet?</option>
                 </select>
 
-                <label for="answer">Answer:</label> <!-- Not yet implemented in database -->
-                <input type="answer" id="answer" name="answer" required>
-                <label for="role">Creating account for:</label>
+                <label for="answer">Answer:</label>
+                <input type="text" id="answer" name="answer" required placeholder="Enter your answer (case insensitive)">
+
+                <label for="role">Account for:</label>
                 <select id="role" name="role" required>
-                    <!--  <option value="student">Student</option> -->
-                    <option value="labtech">Lab Technician</option> 
+                    <option value="student">Student</option>
+                    <option value="labtech">Lab Technician</option>
                 </select>
 
                 <button type="submit">Register</button>

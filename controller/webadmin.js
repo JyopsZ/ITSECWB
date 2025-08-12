@@ -79,7 +79,7 @@ router.get('/WcreateLabtechs', isWebadmin, function(req, res) {
 });
 
 router.post('/WcreateLabtechs', isWebadmin, async function(req, res) {
-  const { email, password, firstName, lastName, role } = req.body;
+  const { firstName, lastName, email, password, role, question, answer } = req.body;
 
   const errors = [];
 
@@ -175,12 +175,17 @@ router.post('/WcreateLabtechs', isWebadmin, async function(req, res) {
         const saltRounds = 10;
         const hashedPassword = await bcryptjs.hash(password, saltRounds);
 
+        const hashedAnswer = answer ? await bcryptjs.hash(answer.toLowerCase(), saltRounds) : null;
+
         const newUser = new User({
             firstName,
             lastName,
             email,
             password: hashedPassword,
-            role
+            role,
+            securityQuestion: question,
+            securityAnswer: hashedAnswer,
+            lastPasswordChange: new Date()
         });
 
         await newUser.save();

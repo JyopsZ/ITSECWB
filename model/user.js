@@ -11,8 +11,8 @@ const userSchema = new mongoose.Schema({
     image: { type: String, default: null },
     userID: { type: Number, unique: true },
 
-    securityQuestion: { type: String, required: true },
-    securityAnswer: { type: String, required: true },
+    securityQuestion: { type: String, required: false},
+    securityAnswer: { type: String, required: false },
     lastPasswordChange: {type: Date, default: Date.now},
     // For login attempt tracking
     failedLoginAttempts: { type: Number, default: 0 },
