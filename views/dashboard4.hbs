@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+        <img src="../images/logo.png" id="logo">
+        <h1>Homepage</h1>
+        <nav>
+            <ul>
+                <li><a href="/WadminPage">Back</a></li>
+            </ul>
+        </nav>
+    </header>
+
+  <!-- Main Content -->
+  <main>
+  <section class="white-box">
+    <h2>Critical Security Event Logs</h2>
+    <table class="white-box-table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Field</th>
+          <th>Operation</th>
+          <th>Status</th>
+          <th>Description</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#criticalLogs}}
+          <tr>
+            <td>{{userID}}</td>
+            <td>{{field}}</td>
+            <td>{{operation}}</td>
+            <td>{{status}}</td>
+            <td>{{description}}</td>
+            <td>{{formatTimestamp timestamp}}</td>
+          </tr>
+        {{/criticalLogs}}
+      </tbody>
+    </table>
+  </section>
+</main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 LabLink. All rights reserved.</p>
+  </footer>
+</body>
+</html>

@@ -4,7 +4,14 @@ const mongoose = require('mongoose');
 const passwordHistorySchema = new mongoose.Schema({
     userID: { type: Number, required: true,ref: 'User'},
     hashedPassword: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now }
+    createdAt:{
+        type: Date, 
+        default: () => {
+            const now = new Date();
+            
+            return new Date(now.getTime() + (8 * 60 * 60 * 1000)); // convert to philippine standard time
+        }
+    }
 });
 
 passwordHistorySchema.index({ userID: 1, createdAt: -1 });
@@ -120,8 +127,8 @@ passwordHistorySchema.statics.getTimeUntilNextPasswordChange = async function(us
             return 0;
         }
         
-        const oneDayFromLastChange = new Date(lastChangeDate.getTime() + 24 * 60 * 60 * 1000);
-        const now = new Date();
+        const oneDayFromLastChange = new Date(lastChangeDate.getTime() + (24 * 60 * 60 * 1000)); // add 24 hours
+        const now = new Date(Date.now() + (8 * 60 * 60 * 1000)); // add 8 hours to be PST
         
         if (now >= oneDayFromLastChange) {
             return 0;

@@ -72,7 +72,8 @@ function denyWebadminAccess(req, res, next) {
         '/WadminPage',
         '/dashboard',
         '/dashboard2',
-        '/dashboard3'
+        '/dashboard3',
+        '/dashboard4'
     ];
     
     // Check if the requested path matches any denied pages

@@ -75,6 +75,19 @@ router.get('/dashboard3', isAuthenticated, isWebadmin, async (req, res) => {
   }
 });
 
+router.get('/dashboard4', isAuthenticated, isWebadmin, async (req, res) => {
+  try {
+    const criticalLogs = await CriticalLogs.find().sort({ timestamp: -1 });
+
+    res.render('dashboard4', {
+      criticalLogs
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching logs');
+  }
+});
+
 router.get('/WcreateLabtechs', isWebadmin, function(req, res) {
   res.render('WcreateLabtechs');
 });
@@ -217,7 +230,7 @@ router.post('/WcreateLabtechs', isWebadmin, async function(req, res) {
     }
 });
 
-router.all(['/WadminPage', '/dashboard', '/dashboard2', '/dashboard3'], (req, res, next) => {
+router.all(['/WadminPage', '/dashboard', '/dashboard2', '/dashboard3', '/dashboard4'], (req, res, next) => {
     if (req.session.user.role === 'student' || req.session.user.role === 'labtech') {
         /*
         const accessControlLog = new AccessControlModel({

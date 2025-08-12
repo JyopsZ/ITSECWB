@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
             const authAttempt = new AuthAttemptsModel({
                 email: email,
                 status: 'failed',
-                description: 'Password was incorrect'
+                description: 'Failed to authenticate with given credentials'
             });
             await authAttempt.save();
 
@@ -64,6 +64,17 @@ router.post('/login', async (req, res) => {
                 // user.lockUntil = new Date(Date.now() + 60 * 60 * 1000); // 1-hour lock for final 
                 user.failedLoginAttempts = 0;
                 await user.save();
+
+                // Log account lockout in CriticalLogs
+                const criticalLog = new CriticalLogs({
+                    userID: user.userID,
+                    field: 'Account',
+                    operation: 'Lockout',
+                    status: 'locked',
+                    description: 'Account locked due to excessive failed login attempts'
+                });
+                await criticalLog.save();
+
                 return res.status(403).redirect('/login?error=Too many failed attempts. Account locked.');
             }
 
@@ -360,6 +371,18 @@ router.post('/verify-security', async (req, res) => {
         if (!canChange) {
             const timeRemaining = await PasswordHistory.getTimeUntilNextPasswordChange(user.userID);
             const hoursRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60));
+
+            // Log failed password reset in CriticalLogs (24-hour rule)
+            const criticalLog = new CriticalLogs({
+                userID: user.userID,
+                field: 'Password',
+                operation: 'Reset',
+                status: 'failed',
+                description: `Failed to reset password due to 24-hour rule. User must wait ${hoursRemaining} more hours.`,
+                timestamp: new Date()
+            });
+            await criticalLog.save();
+
             return res.render('SecurityQuestions', {
                 email: user.email,
                 question: user.securityQuestion,
@@ -370,6 +393,18 @@ router.post('/verify-security', async (req, res) => {
         // Verify security answer
         const isAnswerCorrect = await bcryptjs.compare(answer.toLowerCase(), user.securityAnswer);
         if (!isAnswerCorrect) {
+            
+            // Log failed password reset in CriticalLogs (incorrect security answer)
+            const criticalLog = new CriticalLogs({
+                userID: user.userID,
+                field: 'Password',
+                operation: 'Reset',
+                status: 'failed',
+                description: 'Failed to reset password due to incorrect security answer',
+                timestamp: new Date()
+            });
+            await criticalLog.save();
+
             return res.render('SecurityQuestions', {
                 email: user.email,
                 question: user.securityQuestion,
@@ -387,6 +422,18 @@ router.post('/verify-security', async (req, res) => {
                 submittedValue: newPassword
             });
             await invalidInput.save();
+
+            // Log failed password reset in CriticalLogs
+            const criticalLog = new CriticalLogs({
+                userID: user.userID,
+                field: 'Password',
+                operation: 'Reset',
+                status: 'failed',
+                description: 'Failed to reset password due to reused password',
+                timestamp: new Date()
+            });
+            await criticalLog.save();
+
             return res.render('SecurityQuestions', {
                 email: user.email,
                 question: user.securityQuestion,
@@ -401,6 +448,17 @@ router.post('/verify-security', async (req, res) => {
         user.password = hashedNewPassword;
         user.lastPasswordChange = new Date();
         await user.save();
+
+        // Log successful password reset in CriticalLogs
+        const criticalLog = new CriticalLogs({
+            userID: user.userID,
+            field: 'Password',
+            operation: 'Reset',
+            status: 'success',
+            description: 'Password reset successfully',
+            timestamp: new Date()
+        });
+        await criticalLog.save();
 
         // Add to password history
         await PasswordHistory.addPasswordHistory(user.userID, hashedNewPassword);
