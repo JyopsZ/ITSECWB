@@ -177,10 +177,21 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
             userID: user.userID,
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.email
+            password: user.password,
+            image: user.image
         };
 
         res.redirect('/studentPage');
+
+        // 2.1.13 Force re-login after critical operations such as password change etc.
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error destroying session:', err);
+                return res.status(500).send('Internal Server Error');
+            }
+            res.redirect('/login');
+        });
+        
     } catch (err) {
         console.error('Error updating user information:', err);
         res.status(500).send('Internal Server Error');
