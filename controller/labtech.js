@@ -17,71 +17,86 @@ function isAuthenticated(req, res, next) {
     res.redirect('/login'); // Redirect to login page if not authenticated
   }
 
+// Role-based access control middleware for lab technician routes
+function isLabTechnician(req, res, next) {
+    if (req.session.user && req.session.user.role === 'labtech') {
+        return next();
+    }
+    // Deny access to students and other roles - redirect to appropriate page
+    if (req.session.user && req.session.user.role === 'student') {
+        return res.status(403).redirect('/studentPage?error=Access denied. You do not have permission to access lab technician pages.');
+    }
+    // If no valid session or unknown role, redirect to login
+    return res.status(403).redirect('/login?error=Access denied. Please log in with appropriate credentials.');
+}
+
+// Apply role-based access control individually to each lab technician route
+
 // Lab Tech main page
-router.get('/labtechView/labtechPage',isAuthenticated, function(req, res) {
+router.get('/labtechView/labtechPage',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/labtechPage.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'labtechPage.html'));
 });
 
-router.get('/labtechView/LViewAvailability',isAuthenticated, function(req, res) {
+router.get('/labtechView/LViewAvailability',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LViewAvailability.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LViewAvailability.html'));
 });
 
-router.get('/labtechView/LSubReservation',isAuthenticated, function(req, res) {
+router.get('/labtechView/LSubReservation',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LSubReservation.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LSubReservation.html'));
 });
 
-router.get('/labtechView/LSubProfile',isAuthenticated, function(req, res) {
+router.get('/labtechView/LSubProfile',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LSubProfile.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LSubProfile.html'));
 });
 
 
 // Lab Tech viewAvailability
-router.get('/labtechView/LReserveslot',isAuthenticated, function(req, res) {
+router.get('/labtechView/LReserveslot',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LReserveslot.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LReserveslot.html'));
 });
 
 
 // Lab Tech LSubReservation
-router.get('/labtechView/LReservation',isAuthenticated, function(req, res) {
+router.get('/labtechView/LReservation',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LReservation.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LReservation.html'));
 });
 
-router.get('/labtechView/LEditReservation',isAuthenticated, function(req, res) {
+router.get('/labtechView/LEditReservation',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LEditReservation.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LEditReservation.html'));
 });
 
-router.get('/labtechView/LRemoveReservationlist',isAuthenticated, function(req, res) {
+router.get('/labtechView/LRemoveReservationlist',isAuthenticated, isLabTechnician, function(req, res) {
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LRemoveReservationlist.html'));
 });
 
 
 // Lab Tech LReservation
 
-router.get('/labtechView/lab1',isAuthenticated, function(req, res) {
+router.get('/labtechView/lab1',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/lab1.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'lab1.html'));
 });
 
-router.get('/labtechView/lab2',isAuthenticated, function(req, res) {
+router.get('/labtechView/lab2',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/lab2.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'lab2.html'));
 });
 
-router.get('/labtechView/lab3',isAuthenticated, function(req, res) {
+router.get('/labtechView/lab3',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/lab3.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'lab3.html'));
 });
 
 
 // Lab Tech LSubProfile
-router.get('/labtechView/searchEditProfile',isAuthenticated, function(req, res) {
+router.get('/labtechView/searchEditProfile',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/searchEditProfile.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'searchEditProfile.html'));
 });
@@ -97,20 +112,20 @@ router.get('/labtechView/LsearchEditProfile',isAuthenticated, function(req, res)
     res.render('LsearchEditProfile'); // modified to be .hbs file.
 });
 
-router.get('/labtechView/LViewOtherProfile',isAuthenticated, function(req, res) {
+router.get('/labtechView/LViewOtherProfile',isAuthenticated, isLabTechnician, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/labtechView/LViewOtherProfile.html"));
     res.sendFile(path.join(rootDir, 'public', 'labtechView', 'LViewOtherProfile.html'));
 });
 
 
 // Labtech Page
-router.get("/labtechPage",isAuthenticated, (req, res) => {
+router.get("/labtechPage",isAuthenticated, isLabTechnician, (req, res) => {
     // Retrieve user data from the session
     const user = req.session.user;
     res.render('labtechPage',{user});
 });
 
-router.get('/LViewEditProfile' ,isAuthenticated, async (req, res) => {
+router.get('/LViewEditProfile' ,isAuthenticated, isLabTechnician, async (req, res) => {
 	const userId = req.session.user.userID;
     const userData = await UserModel.find({ userID:userId }) // select * from Post where userID == userData.userID
     res.render('LViewEditProfile',{userData})

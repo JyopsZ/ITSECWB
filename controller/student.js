@@ -16,71 +16,119 @@ function isAuthenticated(req, res, next) {
     }
     res.redirect('/login'); // Redirect to login page if not authenticated
   }
+
+// Role-based access control middleware for student routes
+function isStudent(req, res, next) {
+    if (req.session.user && req.session.user.role === 'student') {
+        return next();
+    }
+    // Deny access to lab technicians and other roles - redirect to appropriate page
+    if (req.session.user && req.session.user.role === 'labtech') {
+        return res.status(403).redirect('/labtechPage?error=Access denied. You do not have permission to access student pages.');
+    }
+    // If no valid session or unknown role, redirect to login
+    return res.status(403).redirect('/login?error=Access denied. Please log in with appropriate credentials.');
+}   
+
+function denyLabTechAccess(req, res, next) {
+    const deniedPages = [
+        '/labtechPage',
+        '/LViewAvailability',
+        '/LSubReservation', 
+        '/LSubProfile',
+        '/LReserveslot',
+        '/LReservation',
+        '/LEditReservation',
+        '/LRemoveReservationlist',
+        '/LsearchOtherProfile',
+        '/LsearchEditProfile',
+        '/LViewOtherProfile',
+        '/LViewEditProfile',
+        '/labtechView' 
+    ];
+    
+    // Check if the requested path matches any denied pages
+    const requestedPath = req.path;
+    const isDenied = deniedPages.some(deniedPage => 
+        requestedPath.includes(deniedPage) || requestedPath === deniedPage
+    );
+    
+    if (isDenied) {
+        return res.status(403).render('error', { 
+            message: 'Access Denied', 
+            error: { status: 403, stack: 'You do not have permission to access this page.' }
+        });
+        // Alternative: redirect to student page
+        // return res.redirect('/studentPage');
+    }
+    
+    next();
+}
   
 //Student studentPage
-router.get('/studentView/studentPage', isAuthenticated, function(req, res) {
+router.get('/studentView/studentPage', isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/studentPage.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'studentPage.html'));
 });
 
-router.get('/studentView/view-availability',isAuthenticated, function(req, res) {
+router.get('/studentView/view-availability',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/view-availability.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'view-availability.html'));
 });
 
-router.get('/studentView/subReservation',isAuthenticated, function(req, res) {
+router.get('/studentView/subReservation',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/subReservation.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'subReservation.html'));
 });
 
-router.get('/studentView/subProfile',isAuthenticated, function(req, res) {
+router.get('/studentView/subProfile',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/subProfile.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'subProfile.html'));
 });
 
 
 //Student subReservation
-router.get('/studentView/reservation',isAuthenticated, function(req, res) {
+router.get('/studentView/reservation',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/reservation.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'reservation.html'));
 });
 
-router.get('/studentView/view-list-reservations',isAuthenticated, function(req, res) {
+router.get('/studentView/view-list-reservations',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/view-list-reservations.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'view-list-reservations.html'));
 });
 
-router.get('/studentView/edit-reservation',isAuthenticated, function(req, res) {
+router.get('/studentView/edit-reservation',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/edit-reservation.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'edit-reservation.html'));
 });
 
 
 // Student reservation
-router.get('/studentView/reserveslot',isAuthenticated, function(req, res) {
+router.get('/studentView/reserveslot',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/reserveslot.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'reserveslot.html'));
 });
 
 
 // Student reserveslot
-router.get('/studentView/lab1',isAuthenticated, function(req, res) {
+router.get('/studentView/lab1',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/lab1.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'lab1.html'));
 });
 
-router.get('/studentView/lab2',isAuthenticated, function(req, res) {
+router.get('/studentView/lab2',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/lab2.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'lab2.html'));
 });
 
-router.get('/studentView/lab3',isAuthenticated, function(req, res) {
+router.get('/studentView/lab3',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/lab3.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'lab3.html'));
 });
 
 // Student Page
-router.get("/studentPage",isAuthenticated, (req, res) => {
+router.get("/studentPage",isAuthenticated, isStudent, (req, res) => {
     // Retrieve user data from the session
     const user = req.session.user;
     res.render('studentPage',{user});
@@ -97,18 +145,18 @@ router.get('/studentView/ViewEditProfile' , async (req, res) => {
 });
 */ 
 
-router.get('/studentView/searchOtherProfile',isAuthenticated, function(req, res) {
+router.get('/studentView/searchOtherProfile',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/searchOtherProfile.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'searchOtherProfile.html'));
 });
 
-router.get('/studentView/DeleteProfile',isAuthenticated, function(req, res) {
+router.get('/studentView/DeleteProfile',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/DeleteProfile.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'DeleteProfile.html'));
 });
 
 // Student serchOtherProfile
-router.get('/studentView/ViewOtherProfile',isAuthenticated, function(req, res) {
+router.get('/studentView/ViewOtherProfile',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/ViewOtherProfile.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'ViewOtherProfile.html'));
 });
@@ -116,7 +164,7 @@ router.get('/studentView/ViewOtherProfile',isAuthenticated, function(req, res) {
 
 // Student ViewEdit Handlebar
 // Route for Handlebar
-router.get('/ViewEditProfile' ,isAuthenticated, async (req, res) => {
+router.get('/ViewEditProfile' ,isAuthenticated, isStudent, async (req, res) => {
     const userId = req.session.user.userID;
     const userData = await UserModel.find({ userID:userId }) // select * from Post where userID == userData.userID
     res.render('ViewEditProfile',{userData})
@@ -124,7 +172,8 @@ router.get('/ViewEditProfile' ,isAuthenticated, async (req, res) => {
 
 // Handling of form data to database
 // Handling of form data to database
-router.post('/editInfo', isAuthenticated, async (req, res) => {
+router.post('/editInfo', isAuthenticated, isStudent, async (req, res) => {
+
     try {
         const { firstName, lastName } = req.body;
 
@@ -241,7 +290,7 @@ router.post('/editImg', async (req, res) => {
 });*/
 
 /* --------------------- SEARCH USERS for students ------------------------ */
-router.post("/findUser",isAuthenticated, async (req, res) => {
+router.post("/findUser",isAuthenticated, isStudent, async (req, res) => {
     try {
         const { userName } = req.body;
         const lowerCaseName = userName.toLowerCase();
@@ -276,7 +325,7 @@ router.post("/findUser",isAuthenticated, async (req, res) => {
 });
 
 /* --------------------- Student RESERVATION ------------------------ */
-router.get('/reservation',isAuthenticated, function(req, res) {
+router.get('/reservation',isAuthenticated, isStudent, function(req, res) {
     const user = req.session.user;
     res.render('reservation', {
         firstName: user.firstName,
@@ -285,7 +334,7 @@ router.get('/reservation',isAuthenticated, function(req, res) {
 });
 
 // Route to fetch reservations
-router.get('/reservations',isAuthenticated, async (req, res) => {
+router.get('/reservations',isAuthenticated, isStudent, async (req, res) => {
     const { labName, date, time } = req.query;
     try {
         const reservations = await ReservationModel.find({ labName, date, time });
@@ -297,7 +346,7 @@ router.get('/reservations',isAuthenticated, async (req, res) => {
 });
 
 // Route to create a new reservation
-router.post('/reservation', isAuthenticated, async (req, res) => {
+router.post('/reservation', isAuthenticated, isStudent, async (req, res) => {
     const { labName, seatRow, seatCol, date, time, reserver } = req.body;
     const seatPos = [parseInt(seatRow), parseInt(seatCol)];
 
@@ -327,7 +376,7 @@ router.post('/reservation', isAuthenticated, async (req, res) => {
 
 
 /* --------------------- Edit Reservation for Students ------------------------ */
-router.get('/view-list-reservations',isAuthenticated, async (req, res) => {
+router.get('/view-list-reservations',isAuthenticated, isStudent, async (req, res) => {
     const getSessionUID = req.session.user.userID;
     const getUserID = await UserModel.findOne({ userID: getSessionUID });
     const firstName = getUserID.firstName;
@@ -352,11 +401,11 @@ router.get('/view-list-reservations',isAuthenticated, async (req, res) => {
     res.render('view-list-reservations', { getReservations: formattedReservations });
 });
 
-router.get('/editReservation',isAuthenticated, async (req, res) => {
+router.get('/editReservation',isAuthenticated, isStudent, async (req, res) => {
     res.render('editReservation');
 });
 
-router.post('/editReservation',isAuthenticated, async (req, res) => {
+router.post('/editReservation',isAuthenticated, isStudent, async (req, res) => {
     const { reservId } = req.body;
     const userID = req.session.user.userID;
 
@@ -397,7 +446,7 @@ router.post('/editReservation',isAuthenticated, async (req, res) => {
     }
 });
 
-router.post('/updateReservation',isAuthenticated, async (req, res) => {
+router.post('/updateReservation',isAuthenticated, isStudent, async (req, res) => {
     const { reservationid, editlab, editdate, edittime, editSeat } = req.body;
     const userID = req.session.user.userID;
 
@@ -432,7 +481,7 @@ router.post('/updateReservation',isAuthenticated, async (req, res) => {
 
 
 /* --------------------- Delete own Profile for Students ------------------------ */
-router.post('/deleteUser',isAuthenticated, async (req, res) => {
+router.post('/deleteUser',isAuthenticated, isStudent, async (req, res) => {
     try {
         const userId = req.session.user.userID;
         const user = await UserModel.findOne({ userID: userId });
@@ -452,7 +501,7 @@ router.post('/deleteUser',isAuthenticated, async (req, res) => {
     }
 });
 /* --------------------- Display User Profile from Tooltip Press ------------------------ */
-router.post("/tooltip",isAuthenticated, async (req, res) => {
+router.post("/tooltip",isAuthenticated, isStudent, async (req, res) => {
     try {
         const { userName } = req.body;
         const lowerCaseName = userName.toLowerCase();
@@ -488,13 +537,13 @@ router.post("/tooltip",isAuthenticated, async (req, res) => {
 
 
 /* --------------------- Student Check Seat Availability ------------------------ */
-router.get('/viewAvailable',isAuthenticated, function(req, res) {
+router.get('/viewAvailable',isAuthenticated, isStudent, function(req, res) {
     const user = req.session.user;
     res.render('viewAvailable', {user: user});
 });
 
 // Route to fetch reservations
-router.get('/viewSeats', async (req, res) => {
+router.get('/viewSeats', isStudent, async (req, res) => {
     const { labName, date, time } = req.query;
     try {
         const viewSeats = await ReservationModel.find({ labName, date, time });
