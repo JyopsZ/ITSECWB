@@ -23,7 +23,7 @@
     "express-session": "^1.18.2",
     "hbs": "^4.2.0",
     "mongodb": "^6.18.0",
-    "mongoose": "^8.17.0",
+    "mongoose": "^8.17.1",
     "mongoose-sequence": "^6.0.1",
     "multer": "^1.4.5-lts.1",
     "multiparty": "^4.2.3",
@@ -32,13 +32,5 @@
   "description": "This web application allows users to reserve slots in a computer laboratory. Users can view available slots, make reservations, and manage their reservations. Lab technicians have additional functionalities to manage all reservations and user profiles.",
   "devDependencies": {
     "dotenv": "^17.2.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JyopsZ/ITSECWB.git"
-  },
-  "bugs": {
-    "url": "https://github.com/JyopsZ/ITSECWB/issues"
-  },
-  "homepage": "https://github.com/JyopsZ/ITSECWB#readme"
+  }
 }
