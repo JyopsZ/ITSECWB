@@ -305,11 +305,7 @@ router.post("/findUser2",isAuthenticated, async (req, res) => {
             ]
         };
 
-        console.log("Search filter:", filter);
-
         const users = await UserModel.find(filter);
-
-        console.log("Found users:", users);
 
         if (users.length === 0) {
             
@@ -350,11 +346,7 @@ router.post("/viewUserLab",isAuthenticated, async (req, res) => {
             };
         }
 
-        console.log("Search filter:", filter);
-
         const users = await UserModel.find(filter);
-
-        console.log("Found users:", users);
 
         res.render('LViewOtherProfile', { userData: users });
     } catch (err) {
@@ -489,11 +481,7 @@ router.post("/tooltipLab",isAuthenticated, async (req, res) => {
             };
         }
 
-        console.log("Search filter:", filter);
-
         const users = await UserModel.find(filter);
-
-        console.log("Found users:", users);
 
         res.render('LTooltipViewUser', { userData: users });
     } catch (err) {

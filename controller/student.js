@@ -83,7 +83,6 @@ router.get('/studentView/lab3',isAuthenticated, function(req, res) {
 router.get("/studentPage",isAuthenticated, (req, res) => {
     // Retrieve user data from the session
     const user = req.session.user;
-    console.log(user);
     res.render('studentPage',{user});
 });
 
@@ -120,7 +119,6 @@ router.get('/studentView/ViewOtherProfile',isAuthenticated, function(req, res) {
 router.get('/ViewEditProfile' ,isAuthenticated, async (req, res) => {
     const userId = req.session.user.userID;
     const userData = await UserModel.find({ userID:userId }) // select * from Post where userID == userData.userID
-    console.log(userData)
     res.render('ViewEditProfile',{userData})
 });
 
@@ -282,11 +280,7 @@ router.post("/findUser",isAuthenticated, async (req, res) => {
             };
         }
 
-        console.log("Search filter:", filter);
-
         const users = await UserModel.find(filter);
-
-        console.log("Found users:", users);
 
         res.render('searchOtherProfile', { userData: users });
     } catch (err) {
@@ -447,7 +441,6 @@ router.post('/updateReservation',isAuthenticated, async (req, res) => {
         { labName: editlab, date: editdate, time: edittime, seatPos: seatPos }
     );
 
-    console.log(specificReserve);
     res.render('EditReservation2', {specificReserve, success: 'Reservation updated successfully.'});
 });
 
@@ -498,11 +491,7 @@ router.post("/tooltip",isAuthenticated, async (req, res) => {
             };
         }
 
-        console.log("Search filter:", filter);
-
         const users = await UserModel.find(filter);
-
-        console.log("Found users:", users);
 
         res.render('tooltipViewUser', { userData: users });
     } catch (err) {
