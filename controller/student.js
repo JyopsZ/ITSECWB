@@ -54,16 +54,21 @@ function denyLabTechAccess(req, res, next) {
     );
     
     if (isDenied) {
-        return res.status(403).render('error', { 
-            message: 'Access Denied', 
-            error: { status: 403, stack: 'You do not have permission to access this page.' }
+        const accessControlLog = new AccessControlModel({
+            userID: req.session.user.userID,
+            description: `Student tried to access labtech page: ${requestedPath}`
         });
+        accessControlLog.save();
+
+        return res.status(403).sendFile(path.join(rootDir, 'public', 'errors', '403.html'));
         // Alternative: redirect to student page
         // return res.redirect('/studentPage');
     }
     
     next();
 }
+
+router.use(denyLabTechAccess);
   
 //Student studentPage
 router.get('/studentView/studentPage', isAuthenticated, isStudent, function(req, res) {
@@ -134,17 +139,6 @@ router.get("/studentPage",isAuthenticated, isStudent, (req, res) => {
     res.render('studentPage',{user});
 });
 
-
-// Student subProfile
-/*
-router.get('/studentView/ViewEditProfile' , async (req, res) => {
-	const userId = req.session.userID;
-    const userData = await UserModel.find({userID:userId}) // select * from Post where userID == userData.userID
-    console.log(userData)
-    res.render('ViewEditProfile',{userData})
-});
-*/ 
-
 router.get('/studentView/searchOtherProfile',isAuthenticated, isStudent, function(req, res) {
 	//res.sendFile(path.join(__dirname + "\\" + "../public/studentView/searchOtherProfile.html"));
     res.sendFile(path.join(rootDir, 'public', 'studentView', 'searchOtherProfile.html'));
@@ -171,11 +165,9 @@ router.get('/ViewEditProfile' ,isAuthenticated, isStudent, async (req, res) => {
 });
 
 // Handling of form data to database
-// Handling of form data to database
-router.post('/editInfo', isAuthenticated, isStudent, async (req, res) => {
-
+router.post('/editInfo', isAuthenticated, async (req, res) => {
     try {
-        const { firstName, lastName } = req.body;
+        const { firstName, lastName, password } = req.body;
 
         const userId = req.session.user.userID;
         const user = await UserModel.findOne({ userID: userId });
@@ -213,6 +205,41 @@ router.post('/editInfo', isAuthenticated, isStudent, async (req, res) => {
             await invalidInput.save();
         }
 
+        // 2.1.5 & 2.1.6 – Enforce password length and complexity
+        if (password) {
+            const minLength = 8;
+            const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+
+            if (password.length < minLength) {
+                errors.push('Password must be at least 8 characters long.');
+                const invalidInput = new InputValidationModel({
+                    userID: req.session.user.userID,
+                    field: 'password',
+                    description: 'Invalid password length',
+                    submittedValue: password
+                });
+                await invalidInput.save();
+            }
+
+            if (!complexityRegex.test(password)) {
+                errors.push('Password must include uppercase, lowercase, number, and special character.');
+                const invalidInput = new InputValidationModel({
+                    userID: req.session.user.userID,
+                    field: 'password',
+                    description: 'Invalid password complexity',
+                    submittedValue: password
+                });
+                await invalidInput.save();
+            }
+
+            // 2.1.3 – Hash the password
+            if (errors.length === 0) {
+                const saltRounds = 10;
+                const hashedPassword = await bcryptjs.hash(password, saltRounds);
+                user.password = hashedPassword;
+            }
+        }
+
         if (errors.length > 0) {
             return res.status(400).render('ViewEditProfile', {
                 userData: [user],
@@ -227,20 +254,11 @@ router.post('/editInfo', isAuthenticated, isStudent, async (req, res) => {
             firstName: user.firstName,
             lastName: user.lastName,
             password: user.password,
-            image: user.image
+            email: user.email,
+            role: user.role
         };
 
         res.redirect('/studentPage');
-
-        // 2.1.13 Force re-login after critical operations such as password change etc.
-        req.session.destroy((err) => {
-            if (err) {
-                console.error('Error destroying session:', err);
-                return res.status(500).send('Internal Server Error');
-            }
-            res.redirect('/login');
-        });
-        
     } catch (err) {
         console.error('Error updating user information:', err);
         res.status(500).send('Internal Server Error');

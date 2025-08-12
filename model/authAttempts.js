@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 
 const authAttemptsSchema = new mongoose.Schema({
-    userID: { type: Number, required: true },
     email: { type: String, required: true },
     status: { type: String, required: true },
+    description: { type: String, required: false },
     timestamp: {
         type: Date, 
         default: () => {

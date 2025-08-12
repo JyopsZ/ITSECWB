@@ -6,6 +6,7 @@ var path = require('path');
 const UserModel = require('../model/user');
 const ReservationModel = require('../model/reservation');
 const InputValidationModel = require('../model/inputValidation');
+const AccessControlModel = require('../model/accessControl');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -347,8 +348,19 @@ router.post("/viewUserLab", isAuthenticated, async (req, res) => {
 });
 
 /* --------------------- RESERVATION for a student (labtech side) ------------------------ */
-router.get('/LReservation',isAuthenticated, function(req, res) {
-    res.render('LReservation');
+// controller/labtech.js
+router.get('/LReservation',isAuthenticated, async (req, res) => {
+    try {
+        const students = await UserModel.find({ role: 'student' });
+        const studentOptions = students.map(student => ({
+            value: `${student.firstName} ${student.lastName}`,
+            text: `${student.firstName} ${student.lastName} (${student.userID})`
+        }));
+        res.render('LReservation', { studentOptions });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 // Route to fetch reservations
@@ -538,6 +550,21 @@ router.delete('/removeReservation/:id',isAuthenticated, async (req, res) => {
         console.error('Error removing reservation:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
+});
+
+// handling access control
+// In labtech.js
+router.all(['/labtechPage', '/LViewAvailability', '/LSubReservation', '/LSubProfile', '/LReserveslot', '/LReservation', '/LEditReservation', '/LRemoveReservationlist', '/LsearchOtherProfile', '/LsearchEditProfile', '/LViewOtherProfile', '/LViewEditProfile', '/labtechView'], (req, res, next) => {
+    if (req.session.user.role === 'student') {
+        const accessControlLog = new AccessControlModel({
+            userID: req.session.user.userID,
+            description: `Student tried to access labtech page: ${req.path}`
+        });
+        accessControlLog.save();
+        
+        return res.status(403).redirect('/403');
+    }
+    next();
 });
 
 module.exports = router;

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header section containing the title and navigation menu -->
+    <header>
+        <img src="images/logo.png" id="logo">
+        <h1>Register</h1>
+        <nav>
+            <ul>
+                <li><a href="index">Back</a></li>
+                <li><a href="login">Login</a></li>
+                <li><a href ="test">Test</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main content section with a registration form -->
+    <main>
+        <section class="register-form">
+            <h2>Create an Account</h2>
+            <!-- Register.html -->
+            <form id="registerForm" action="/register" method="POST">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
+
+                <label for="email">DLSU Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <p>Password requires:</p>
+                <li>8 characters minimum</li>
+                <li>Uppercase, Lowercase</li>
+                <li>Number, and Special character</li>
+                <br>
+
+                <label for="question">Choose a Security Question:</label> <!-- Not yet implemented in database -->
+                <select id="question">
+                <option value="volvo">What is the city you were born in?</option>
+                <option value="saab">What is your sibling's nickname?</option>
+                <option value="opel">What was the first concert you attended?</option>
+                </select>
+
+                <label for="answer">Answer:</label> <!-- Not yet implemented in database -->
+                <input type="answer" id="answer" name="answer" required>
+                <label for="role">I am a:</label>
+                <select id="role" name="role" required>
+                    <option value="student">Student</option>
+                    <option value="labtech">Lab Technician</option>
+                </select>
+
+                <button type="submit">Register</button>
+            </form>
+                {{#if errors}}
+                    <ul>
+                    {{#each errors}}
+                        <li style="color: red">{{this}}</li>
+                    {{/each}}
+                    </ul>
+                {{/if}}
+        </section>
+    </main>
+    
+    <!-- Footer section with copyright information -->
+    <footer>
+        <p>&copy; 2024 LabLink. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Retrieve the error message from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        // If there's an error, display it
+        if (error) {
+            const errorMessageDiv = document.getElementById("errorMessage");
+            errorMessageDiv.textContent = decodeURIComponent(error);
+        }
+    </script>
+</body>
+</html>

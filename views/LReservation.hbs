@@ -43,7 +43,11 @@
                     <option value="ten">10:00 - 10:30 AM</option>
                 </select>
                 <label for="reserver">Reserved For:</label>
-                <input type="text" id="reserver" name="reserver">
+                <select id="reserver" name="reserver">
+                    {{#each studentOptions}}
+                        <option value="{{value}}">{{text}}</option>
+                    {{/each}}
+                </select>
                 
                 <!-- Hidden inputs to store seat position -->
                 <input type="hidden" id="seatRow" name="seatRow" value="">

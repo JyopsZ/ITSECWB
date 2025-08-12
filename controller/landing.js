@@ -3,6 +3,8 @@ const bcryptjs = require('bcryptjs');
 var router = express.Router();
 var path = require('path');
 const User = require('../model/user');
+const InputValidationModel = require('../model/inputValidation');
+const AuthAttemptsModel = require('../model/authAttempts');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -20,9 +22,17 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body; // get data from form
 
     try {
-        const user = await User.findOne({ email }); // check list of emails in db then display user not found error (Fix kase vulnerability, make general)
+        const user = await User.findOne({ email }); 
 
         if (!user) {
+            // Log invalid input
+            const authAttempt = new AuthAttemptsModel({
+                email: email,
+                status: 'failed',
+                description: 'Email is not a registerd user'
+            });
+            await authAttempt.save();
+
             return res.status(401).redirect('/login?error=Invalid username and/or password.');
         }
 
@@ -36,6 +46,15 @@ router.post('/login', async (req, res) => {
         const MAX_ATTEMPTS = 3; //change this to increase or decrease number of attempts
 
         if (!isMatch) {
+
+            // log if it is not a match
+            const authAttempt = new AuthAttemptsModel({
+                email: email,
+                status: 'failed',
+                description: 'Password was incorrect'
+            });
+            await authAttempt.save();
+
             user.failedLoginAttempts += 1;
 
             if (user.failedLoginAttempts >= MAX_ATTEMPTS) {
@@ -49,6 +68,13 @@ router.post('/login', async (req, res) => {
             await user.save();
             return res.status(401).redirect('/login?error=Invalid username and/or password.');
         }
+
+         // Log successful login attempt
+        const authAttempt = new AuthAttemptsModel({
+            email: email,
+            status: 'success'
+        });
+        await authAttempt.save();
 
         //  Successful login: reset counters
         user.failedLoginAttempts = 0;
@@ -77,53 +103,100 @@ router.post('/login', async (req, res) => {
 
 
 router.get('/register', function(req, res) {
-    res.sendFile(path.join(rootDir, 'public', 'register.html'));
-	//res.sendFile(path.join(__dirname + "\\" + "../public/register.html"));
+    res.render('register.hbs'); // changed register to use hbs
 });
-
-let userIDCounter = 5021;
 
 router.post('/register', async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
+    const errors = [];
 
     // 2.1.5 & 2.1.6 – Enforce password length and complexity
     const minPasswordLength = 8;
     const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
 
     if (password.length < minPasswordLength) {
-        return res.status(400).redirect('/register?error=Password must be at least 8 characters long.');
+        const invalidInput = new InputValidationModel({
+            field: 'password',
+            description: 'Password was less than 8 characters long',
+            submittedValue: password
+        });
+        await invalidInput.save();
+        errors.push('Password must be at least 8 characters long');
     }
 
     if (!complexityRegex.test(password)) {
-        return res.status(400).redirect('/register?error=Password must include uppercase, lowercase, number, and special character.');
+        const invalidInput = new InputValidationModel({
+            field: 'password',
+            description: 'Password did not comply with regex',
+            submittedValue: password
+        });
+        await invalidInput.save();
+        errors.push('Password must include uppercase, lowercase, number, and special character');
     }
 
-    // 2.3.2 – Validate first name length (should be between 2 to 50 characters)
+     // 2.3.2 – Validate first name length (should be between 2 to 50 characters)
     if (firstName.length < 2 || firstName.length > 50) {
-        return res.status(400).redirect('/register?error=First name must be between 2 and 50 characters.');
+        const invalidInput = new InputValidationModel({
+            field: 'firstName',
+            description: 'First name must be between 2 and 50 characters',
+            submittedValue: firstName
+        });
+        await invalidInput.save();
+        errors.push('First name must be between 2 and 50 characters');
     }
 
     // 2.3.2 – Validate last name length (should be between 2 to 50 characters)
     if (lastName.length < 2 || lastName.length > 50) {
-        return res.status(400).redirect('/register?error=Last name must be between 2 and 50 characters.');
+        const invalidInput = new InputValidationModel({
+            field: 'lastName',
+            description: 'Last name must be between 2 and 50 characters',
+            submittedValue: lastName
+        });
+        await invalidInput.save();
+        errors.push('Last name must be between 2 and 50 characters');
     }
 
     // 2.3.2 - Validate Email Data Range
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
-        return res.status(400).redirect('/register?error=Invalid email format.');
+        const invalidInput = new InputValidationModel({
+            field: 'email',
+            description: 'Invalid email format, regex failed',
+            submittedValue: email
+        });
+        await invalidInput.save();
+        errors.push('Invalid email format');
     }
 
     // 2.3.3 – Validate email length (should be between 5 to 100 characters)
     if (email.length < 5 || email.length > 100) {
-        return res.status(400).redirect('/register?error=Email must be between 5 and 100 characters.');
+        const invalidInput = new InputValidationModel({
+            field: 'email',
+            description: 'Email was not within the specified length',
+            submittedValue: email
+        });
+        await invalidInput.save();
+        errors.push('Email must be between 5 and 100 characters');
+    }
+
+    if (errors.length > 0) {
+        // If there are errors, render the register page with the errors
+        return res.status(400).render('register', { errors: errors });
     }
 
     try {
         // Check if the email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).redirect('/register?error=Email already exists.');
+            const invalidInput = new InputValidationModel({
+                userID: null, // Since user is not logged in, set userID to null
+                field: 'email',
+                description: 'Email already exists',
+                submittedValue: email
+            });
+            await invalidInput.save();
+            errors.push('Email already exists');
+            return res.status(400).render('register', { errors: errors });
         }
 
         // 2.1.3 – Hash the password

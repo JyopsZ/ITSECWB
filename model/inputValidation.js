@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const inputValidationSchema = new mongoose.Schema({
-    userID: { type: Number, required: true },
+    userID: { type: Number, required: false},
     field: { type: String, required: true },
     description: { type: String, required: true },
     submittedValue: { type: String, required: true },
