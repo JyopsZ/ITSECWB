@@ -5,6 +5,7 @@ var path = require('path');
 const User = require('../model/user');
 const InputValidationModel = require('../model/inputValidation');
 const AuthAttemptsModel = require('../model/authAttempts');
+const PasswordHistory = require('../model/password');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -112,7 +113,7 @@ router.get('/register', function(req, res) {
 });
 
 router.post('/register', async (req, res) => {
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, password, role, question, answer } = req.body;
     const errors = [];
 
     // 2.1.5 & 2.1.6 – Enforce password length and complexity
@@ -207,15 +208,23 @@ router.post('/register', async (req, res) => {
         const saltRounds = 10;
         const hashedPassword = await bcryptjs.hash(password, saltRounds);
 
+        const hashedAnswer = answer ? await bcryptjs.hash(answer.toLowerCase(), saltRounds) : null;
+
         const newUser = new User({
             firstName,
             lastName,
             email,
             password: hashedPassword,
-            role
+            role,
+            securityQuestion: question,
+            securityAnswer: hashedAnswer,
+            lastPasswordChange: new Date()
         });
 
-        await newUser.save();
+        const savedUser = await newUser.save();
+
+        // Add initial password to history
+        await PasswordHistory.addPasswordHistory(savedUser.userID, hashedPassword);
         res.status(201).redirect('/login');
     } catch (error) {
         console.error(error);
@@ -250,6 +259,10 @@ router.get('/passwordreset', function(req, res) {
     res.sendFile(path.join(rootDir, 'public', 'passwordreset.html'));
 });
 
+router.get('/passwordreset', function(req, res) {
+    res.sendFile(path.join(rootDir, 'public', 'passwordreset.html'));
+});
+
 router.post('/passwordreset', async (req, res) => {
     const { email } = req.body;
 
@@ -259,10 +272,120 @@ router.post('/passwordreset', async (req, res) => {
         if (!user) {
             return res.status(404).redirect('/passwordreset?error=Email not found.');
         }
-        res.status(200).render('SecurityQuestions');
+
+        if (!user.securityQuestion || !user.securityAnswer) {
+            return res.status(400).redirect('/passwordreset?error=No security question set for this account. Please contact support.');
+        }
+
+        // Store user ID in session for security question verification
+        req.session.resetUserID = user.userID;
+
+        res.render('SecurityQuestions', {
+            email: user.email,
+            question: user.securityQuestion
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).redirect('/passwordreset?error=Server error. Please try again.');
+    }
+});
+
+router.post('/verify-security', async (req, res) => {
+    const { answer, newPassword, confirmPassword } = req.body;
+
+    try {
+        if (!req.session.resetUserID) {
+            return res.status(400).redirect('/passwordreset?error=Session expired. Please start over.');
+        }
+
+        const user = await User.findOne({ userID: req.session.resetUserID });
+        if (!user) {
+            return res.status(404).redirect('/passwordreset?error=User not found.');
+        }
+
+        // Check if passwords match
+        if (newPassword !== confirmPassword) {
+            return res.render('SecurityQuestions', {
+                email: user.email,
+                question: user.securityQuestion,
+                error: 'Passwords do not match.'
+            });
+        }
+
+        // Validate new password
+        const minPasswordLength = 8;
+        const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+
+        if (newPassword.length < minPasswordLength) {
+            return res.render('SecurityQuestions', {
+                email: user.email,
+                question: user.securityQuestion,
+                error: 'Password must be at least 8 characters long.'
+            });
+        }
+
+        if (!complexityRegex.test(newPassword)) {
+            return res.render('SecurityQuestions', {
+                email: user.email,
+                question: user.securityQuestion,
+                error: 'Password must include uppercase, lowercase, number, and special character.'
+            });
+        }
+
+        // Check if user can change password (24-hour rule)
+        const canChange = await PasswordHistory.canChangePassword(user.userID);
+        if (!canChange) {
+            const timeRemaining = await PasswordHistory.getTimeUntilNextPasswordChange(user.userID);
+            const hoursRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60));
+            return res.render('SecurityQuestions', {
+                email: user.email,
+                question: user.securityQuestion,
+                error: `You can only change your password once every 24 hours. Please wait ${hoursRemaining} more hours.`
+            });
+        }
+
+        // Verify security answer
+        const isAnswerCorrect = await bcryptjs.compare(answer.toLowerCase(), user.securityAnswer);
+        if (!isAnswerCorrect) {
+            return res.render('SecurityQuestions', {
+                email: user.email,
+                question: user.securityQuestion,
+                error: 'Incorrect security answer.'
+            });
+        }
+
+        // Check if password was used before
+        const isPasswordReused = await PasswordHistory.isPasswordUsedBefore(user.userID, newPassword);
+        if (isPasswordReused) {
+            return res.render('SecurityQuestions', {
+                email: user.email,
+                question: user.securityQuestion,
+                error: 'You cannot reuse a previous password. Please choose a different password.'
+            });
+        }
+
+        // Hash new password and update user
+        const saltRounds = 10;
+        const hashedNewPassword = await bcryptjs.hash(newPassword, saltRounds);
+
+        user.password = hashedNewPassword;
+        user.lastPasswordChange = new Date();
+        await user.save();
+
+        // Add to password history
+        await PasswordHistory.addPasswordHistory(user.userID, hashedNewPassword);
+
+        // Clear session
+        delete req.session.resetUserID;
+
+        res.redirect('/login?success=Password reset successfully. Please login with your new password.');
+    } catch (error) {
+        console.error(error);
+        return res.status(500).render('SecurityQuestions', {
+            email: 'Unknown',
+            question: 'Unknown',
+            error: 'Server error. Please try again.'
+        });
     }
 });
 

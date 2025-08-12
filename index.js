@@ -26,6 +26,7 @@ const port = envPort || 3000;
 const Reservation = require("./model/reservation")
 const Profile = require("./model/profile")
 const User = require("./model/user")
+const PasswordHistory = require("./model/password")
 
 const InputValidation = require("./model/inputValidation")
 const AuthAttempts = require("./model/authAttempts")
