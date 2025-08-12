@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Labtechs</title>
+  <link rel="stylesheet" href="../css/styles.css">
 </head>
-<body>
-    <!-- Header section containing the title and navigation menu -->
-    <header>
-        <img src="images/logo.png" id="logo">
-        <h1>Register</h1>
-        <nav>
-            <ul>
-                <li><a href="index">Back</a></li>
-                <li><a href="login">Login</a></li>
-                <li><a href="AboutMe">About</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <!-- Main content section with a registration form -->
-    <main>
-        <section class="register-form">
-            <h2>Create an Account</h2>
-            <!-- Register.html -->
-            <form id="registerForm" action="/register" method="POST">
+<body>
+  <!-- Header section containing the title and navigation menu -->
+  <header>
+    <img src="../images/logo.png" id="logo">
+    <h1>LabLink</h1>
+    <nav>
+      <ul>
+        <li><a href="WadminPage">Back</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="register-form">
+            <h2>Create Lab Technician Accounts</h2>
+
+            <form id="registerForm" action="/WcreateLabtechs" method="POST">
                 <label for="firstName">First Name:</label>
                 <input type="text" id="firstName" name="firstName" required>
 
@@ -52,10 +50,10 @@
 
                 <label for="answer">Answer:</label> <!-- Not yet implemented in database -->
                 <input type="answer" id="answer" name="answer" required>
-                <label for="role">I am a:</label>
+                <label for="role">Creating account for:</label>
                 <select id="role" name="role" required>
-                    <option value="student">Student</option>
-                    <!-- <option value="labtech">Lab Technician</option> -->
+                    <!--  <option value="student">Student</option> -->
+                    <option value="labtech">Lab Technician</option> 
                 </select>
 
                 <button type="submit">Register</button>
@@ -68,23 +66,11 @@
                     </ul>
                 {{/if}}
         </section>
-    </main>
-    
-    <!-- Footer section with copyright information -->
-    <footer>
-        <p>&copy; 2024 LabLink. All rights reserved.</p>
-    </footer>
+  </main>
 
-    <script>
-        // Retrieve the error message from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const error = urlParams.get('error');
-        
-        // If there's an error, display it
-        if (error) {
-            const errorMessageDiv = document.getElementById("errorMessage");
-            errorMessageDiv.textContent = decodeURIComponent(error);
-        }
-    </script>
+  <!-- Footer section with copyright information -->
+  <footer>
+    <p>&copy; 2024 LabLink. All rights reserved.</p>
+  </footer>
 </body>
 </html>

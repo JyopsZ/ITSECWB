@@ -13,6 +13,7 @@
         <h1>Homepage</h1>
         <nav>
             <ul>
+                <li><a href="/WcreateLabtechs">Create Labtechs</a></li>
                 <li><a href="/dashboard">Access Control Logs</a></li>
                 <li><a href="/dashboard2">Auth Attempts Logs</a></li>
                 <li><a href="/dashboard3">Input Validation Logs</a></li>
@@ -25,7 +26,15 @@
         <section class="intro">
             <h2>Welcome back!</h2>
             <p>View logs of the web application.</p>
-            <p>Last login attempt: {{lastAuthAttempt.status}} on</p> <p>{{formatTimestamp lastAuthAttempt.timestamp}}</p>
+            {{#if lastAuthAttempt}}
+                <p>Last login attempt: {{lastAuthAttempt.status}} on</p> <p>{{formatTimestamp lastAuthAttempt.timestamp}}</p>
+            {{else}}
+                <p>No previous login attempts.</p>
+            {{/if}}
+            
+            {{#if message}}
+                <p style="color: green">{{message}}</p>
+            {{/if}}
         </section>
     </main>
 

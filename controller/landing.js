@@ -194,13 +194,12 @@ router.post('/register', async (req, res) => {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             const invalidInput = new InputValidationModel({
-                userID: null, // Since user is not logged in, set userID to null
                 field: 'email',
                 description: 'Email already exists',
                 submittedValue: email
             });
             await invalidInput.save();
-            errors.push('Email already exists');
+            errors.push('Unable to create account.');
             return res.status(400).render('register', { errors: errors });
         }
 
