@@ -53,22 +53,48 @@ function denyLabTechAccess(req, res, next) {
         requestedPath.includes(deniedPage) || requestedPath === deniedPage
     );
     
-    if (isDenied) {
+    if (isDenied && req.session.user.role === 'student') {
         const accessControlLog = new AccessControlModel({
             userID: req.session.user.userID,
-            description: `Student tried to access labtech page: ${requestedPath}`
+            description: `Student user tried to access labtech page: ${requestedPath}`
         });
         accessControlLog.save();
 
         return res.status(403).sendFile(path.join(rootDir, 'public', 'errors', '403.html'));
-        // Alternative: redirect to student page
-        // return res.redirect('/studentPage');
+    }
+    
+    next();
+}
+
+function denyWebadminAccess(req, res, next) {
+    const deniedPages = [
+        '/WadminPage',
+        '/dashboard',
+        '/dashboard2',
+        '/dashboard3'
+    ];
+    
+    // Check if the requested path matches any denied pages
+    const requestedPath = req.path;
+    const isDenied = deniedPages.some(deniedPage => 
+        requestedPath.includes(deniedPage) || requestedPath === deniedPage
+    );
+    
+    if (isDenied && req.session.user.role === 'student') {
+        const accessControlLog = new AccessControlModel({
+            userID: req.session.user.userID,
+            description: `Student user tried to access webadmin page: ${requestedPath}`
+        });
+        accessControlLog.save();
+
+        return res.status(403).sendFile(path.join(rootDir, 'public', 'errors', '403.html'));
     }
     
     next();
 }
 
 router.use(denyLabTechAccess);
+router.use(denyWebadminAccess);
   
 //Student studentPage
 router.get('/studentView/studentPage', isAuthenticated, isStudent, function(req, res) {

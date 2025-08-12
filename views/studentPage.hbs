@@ -25,7 +25,7 @@
         <section class="intro">
             <h2>Welcome to LabLink, {{user.firstName}}!</h2>
             <p>Reserve a seat in one of our computer labs easily and quickly.</p>
-        </section>
+            <p>Last login attempt: {{lastAuthAttempt.status}} on</p> <p>{{formatTimestamp lastAuthAttempt.timestamp}}</p>
     </main>
 
     <!-- Footer section with copyright information -->

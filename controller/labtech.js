@@ -31,6 +31,35 @@ function isLabTechnician(req, res, next) {
     return res.status(403).redirect('/login?error=Access denied. Please log in with appropriate credentials.');
 }
 
+function denyWadminForLabtech(req, res, next) {
+    const deniedPages = [
+        '/WadminPage',
+        '/dashboard',
+        '/dashboard2',
+        '/dashboard3'
+    ];
+    
+    // Check if the requested path matches any denied pages
+    const requestedPath = req.path;
+    const isDenied = deniedPages.some(deniedPage => 
+        requestedPath.includes(deniedPage) || requestedPath === deniedPage
+    );
+    
+    if (isDenied && req.session.user.role === 'labtech') {
+        const accessControlLog = new AccessControlModel({
+            userID: req.session.user.userID,
+            description: `Labtech user tried to access webadmin page: ${requestedPath}`
+        });
+        accessControlLog.save();
+
+        return res.status(403).sendFile(path.join(rootDir, 'public', 'errors', '403.html'));
+    }
+    
+    next();
+}
+
+router.use(denyWadminForLabtech);
+
 // Apply role-based access control individually to each lab technician route
 
 // Lab Tech main page
@@ -554,12 +583,14 @@ router.delete('/removeReservation/:id',isAuthenticated, async (req, res) => {
 
 // handling access control
 router.all(['/labtechPage', '/LViewAvailability', '/LSubReservation', '/LSubProfile', '/LReserveslot', '/LReservation', '/LEditReservation', '/LRemoveReservationlist', '/LsearchOtherProfile', '/LsearchEditProfile', '/LViewOtherProfile', '/LViewEditProfile', '/labtechView'], (req, res, next) => {
-    if (req.session.user.role === 'student') {
+    if (req.session.user.role === 'labtech') {
+        /*
         const accessControlLog = new AccessControlModel({
             userID: req.session.user.userID,
             description: `Student tried to access labtech page: ${req.path}`
         });
         accessControlLog.save();
+        */
         
         return res.status(403).redirect('/403');
     }

@@ -24,13 +24,6 @@ function isWebadmin(req, res, next) {
   if (req.session.user && req.session.user.role === 'webadmin') {
     return next();
   }
-  // Deny access to students and other roles - redirect to 403 page
-  if (req.session.user && req.session.user.role === 'student') {
-    return res.status(403).redirect('/studentPage?error=Access denied. You do not have permission to access web admin pages.');
-  }
-  if (req.session.user && req.session.user.role === 'labtech') {
-    return res.status(403).redirect('/labtechPage?error=Access denied. You do not have permission to access web admin pages.');
-  }
 
   // If no valid session or unknown role, redirect to login
   return res.status(403).redirect('/login?error=Access denied. Please log in with appropriate credentials.');
@@ -82,16 +75,17 @@ router.get('/dashboard3', isAuthenticated, isWebadmin, async (req, res) => {
 });
 
 router.all(['/WadminPage', '/dashboard', '/dashboard2', '/dashboard3'], (req, res, next) => {
-    if (req.session.user.role === 'student') {
+    if (req.session.user.role === 'student' || req.session.user.role === 'labtech') {
+        /*
         const accessControlLog = new AccessControlModel({
             userID: req.session.user.userID,
-            description: `Student tried to access webadmin page: ${req.path}`
+            description: `Unauthorized user tried to access webadmin page: ${req.path}`
         });
         accessControlLog.save();
+        */
         
         return res.status(403).redirect('/403');
     }
-    next();
 });
 
 

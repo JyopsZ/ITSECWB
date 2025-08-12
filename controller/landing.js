@@ -76,6 +76,11 @@ router.post('/login', async (req, res) => {
         });
         await authAttempt.save();
 
+        const lastAuthAttempt = await AuthAttemptsModel.findOne({
+            email: email,
+            _id: { $ne: authAttempt._id } // exclude the current successful login attempt to get next latest
+        }).sort({ timestamp: -1 });
+
         //  Successful login: reset counters
         user.failedLoginAttempts = 0;
         user.lockUntil = null;
@@ -85,11 +90,11 @@ router.post('/login', async (req, res) => {
 
         switch (user.role) {
             case 'student':
-                return res.render('studentPage', { user });
+                return res.render('studentPage', { user, lastAuthAttempt: lastAuthAttempt });
             case 'labtech':
-                return res.render('labtechPage', { user });
+                return res.render('labtechPage', { user, lastAuthAttempt: lastAuthAttempt });
             case 'webadmin':
-                return res.render('WadminPage', { user });
+                return res.render('WadminPage', { user, lastAuthAttempt: lastAuthAttempt });
             default:
                 //return res.status(403).send('Unauthorized access');
                 return res.redirect('/error/403'); // redirect to 403 error page if user role is not recognized
