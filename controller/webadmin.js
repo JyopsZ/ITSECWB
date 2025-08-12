@@ -8,6 +8,7 @@ const ReservationModel = require('../model/reservation');
 const InputValidationModel = require('../model/inputValidation');
 const AccessControlModel = require('../model/accessControl');
 const AuthAttemptsModel = require('../model/authAttempts');
+const CriticalLogs = require('../model/criticalLogs');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -154,6 +155,15 @@ router.post('/WcreateLabtechs', isWebadmin, async function(req, res) {
   }
 
   if (errors.length > 0) {
+    // Log failed account creation
+    const criticalLog = new CriticalLogs({
+      userID: null,
+      field: 'Account',
+      operation: 'Account Creation',
+      status: 'failed',
+      description: 'Failed to create account due to validation errors'
+    });
+    await criticalLog.save();
     return res.status(400).render('WcreateLabtechs', { errors });
   }
 
@@ -189,6 +199,17 @@ router.post('/WcreateLabtechs', isWebadmin, async function(req, res) {
         });
 
         await newUser.save();
+
+        // Log successful account creation
+        const criticalLog = new CriticalLogs({
+          userID: newUser.userID,
+          field: 'Account',
+          operation: 'Account Creation',
+          status: 'success',
+          description: 'Account created successfully'
+        });
+        await criticalLog.save();
+
         res.render('WadminPage', { message: 'Account created successfully!' });
     } catch (error) {
         console.error(error);

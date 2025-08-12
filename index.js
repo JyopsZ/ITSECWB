@@ -31,6 +31,7 @@ const PasswordHistory = require("./model/password")
 const InputValidation = require("./model/inputValidation")
 const AuthAttempts = require("./model/authAttempts")
 const AccessControl = require("./model/accessControl")
+const CriticalLogs = require("./model/criticalLogs")
 
 app.use(express.json()) // use json
 app.use(bodyParser.urlencoded({extended: false}));

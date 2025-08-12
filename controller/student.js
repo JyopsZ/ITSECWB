@@ -7,6 +7,7 @@ const UserModel = require('../model/user');
 const ReservationModel = require('../model/reservation');
 const InputValidationModel = require('../model/inputValidation');
 const AccessControlModel = require('../model/accessControl');
+const CriticalLogs = require('../model/criticalLogs');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -267,6 +268,15 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
         }
 
         if (errors.length > 0) {
+            const criticalLog = new CriticalLogs({ // Log failed account edit change
+                userID: user.userID,
+                field: 'Account',
+                operation: 'Edit',
+                status: 'failed',
+                description: 'Account change failed due to validation errors'
+            });
+            await criticalLog.save();
+
             return res.status(400).render('ViewEditProfile', {
                 userData: [user],
                 errors
@@ -283,6 +293,15 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
             email: user.email,
             role: user.role
         };
+
+        const criticalLog = new CriticalLogs({ // Log successful account edit
+            userID: user.userID,
+            field: 'Account',
+            operation: 'Edit',
+            status: 'success',
+            description: 'Account Editted successfully'
+        });
+        await criticalLog.save();
 
         res.redirect('/studentPage');
     } catch (err) {
@@ -537,9 +556,30 @@ router.post('/deleteUser',isAuthenticated, isStudent, async (req, res) => {
         // Delete associated reservations
         await ReservationModel.deleteMany({ reserver: fullName });
 
+        const criticalLogSuccess = new CriticalLogs({ // Log successful account deletion
+            userID: user.userID,
+            field: 'Account',
+            operation: 'Delete',
+            status: 'success',
+            description: 'User successfully deleted their own account',
+            timestamp: new Date()
+        });
+        await criticalLogSuccess.save();
+
         req.session.destroy();
         res.redirect('/');
     } catch (err) {
+
+        const criticalLogFailed = new CriticalLogs({ // Log failed account deletion
+            userID: req.session.user.userID,
+            field: 'Account',
+            operation: 'Delete',
+            status: 'failed',
+            description: 'User failed to delete their own account',
+            timestamp: new Date()
+        });
+        await criticalLogFailed.save();
+
         console.error(err);
         res.status(500).send('Internal Server Error');
     }

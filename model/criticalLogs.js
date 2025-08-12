@@ -4,6 +4,7 @@ const criticalLogsSchema = new mongoose.Schema({
     userID: { type: Number, required: false},
     field: { type: String, required: true },
     operation: { type: String, required: true },
+    status: { type: String, required: true },
     description: { type: String, required: true },
     timestamp: {
         type: Date, 
@@ -15,6 +16,6 @@ const criticalLogsSchema = new mongoose.Schema({
     }
 })
 
-const inputValidation = mongoose.model('InputValidation', inputValidationSchema)
+const criticalLogs = mongoose.model('CriticalLogs', criticalLogsSchema)
 
-module.exports = inputValidation
+module.exports = criticalLogs

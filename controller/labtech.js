@@ -7,6 +7,7 @@ const UserModel = require('../model/user');
 const ReservationModel = require('../model/reservation');
 const InputValidationModel = require('../model/inputValidation');
 const AccessControlModel = require('../model/accessControl');
+const CriticalLogs = require('../model/criticalLogs');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -233,6 +234,16 @@ router.post('/editInfolabtech',isAuthenticated, async (req, res) => {
                 submittedValue: password
             });
             await invalidInput.save();
+
+            const criticalLog = new CriticalLogs({
+                userID: user.userID,
+                field: 'Profile',
+                operation: 'Edit',
+                status: 'failed',
+                description: 'User profile edit failed due to validation errors'
+            });
+            await criticalLog.save();
+            
             return res.status(400).render('LViewEditProfile', {
                 userData: [user],
                 errors: errors
@@ -265,6 +276,22 @@ router.post('/editInfolabtech',isAuthenticated, async (req, res) => {
 
         // Save the updated user to the database
         await user.save();
+
+        if (errors.length === 0) { // Log successful profile edit
+
+            await user.save();
+
+            const criticalLog = new CriticalLogs({
+                userID: user.userID,
+                field: 'Profile',
+                operation: 'Edit',
+                status: 'success',
+                description: 'User profile edited successfully'
+            });
+            await criticalLog.save();
+
+            //res.render('LViewEditProfile', { userData: [user] });
+        }
 
         // 2.1.13 Force re-login after critical operations such as password change etc.
         req.session.destroy((err) => {

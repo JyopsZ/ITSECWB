@@ -6,6 +6,7 @@ const User = require('../model/user');
 const InputValidationModel = require('../model/inputValidation');
 const AuthAttemptsModel = require('../model/authAttempts');
 const PasswordHistory = require('../model/password');
+const CriticalLogs = require('../model/criticalLogs');
 
 const rootDir = path.join(__dirname, '..');
 
@@ -186,8 +187,19 @@ router.post('/register', async (req, res) => {
     }
 
     if (errors.length > 0) {
-        // If there are errors, render the register page with the errors
-        return res.status(400).render('register', { errors: errors });
+        // Log failed account creation
+        const criticalLog = new CriticalLogs({
+            field: 'Account',
+            operation: 'Account Creation',
+            status: 'failed',
+            description: 'Failed to create account due to validation errors',
+            timestamp: new Date()
+        });
+        await criticalLog.save();
+
+        return res.render('register', {
+            errors: errors
+        });
     }
 
     try {
@@ -222,6 +234,17 @@ router.post('/register', async (req, res) => {
         });
 
         const savedUser = await newUser.save();
+
+        // Log successful account creation
+        const criticalLog = new CriticalLogs({
+            userID: savedUser.userID,
+            field: 'Account',
+            operation: 'Creation',
+            status: 'success',
+            description: 'Account created successfully',
+            timestamp: new Date()
+        });
+        await criticalLog.save();
 
         // Add initial password to history
         await PasswordHistory.addPasswordHistory(savedUser.userID, hashedPassword);
