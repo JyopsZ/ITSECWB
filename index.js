@@ -73,6 +73,12 @@ app.use('/', webadminRoutes);
 var hbs = require('hbs')
 app.set('view engine','hbs');
 
+const moment = require('moment-timezone');
+
+hbs.registerHelper('formatTimestamp', function(timestamp) {
+    return moment(timestamp).subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
+});
+
 var server = app.listen(port, function() {
 	console.log("listening to port 3000...");
 });

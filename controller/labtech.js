@@ -553,7 +553,6 @@ router.delete('/removeReservation/:id',isAuthenticated, async (req, res) => {
 });
 
 // handling access control
-// In labtech.js
 router.all(['/labtechPage', '/LViewAvailability', '/LSubReservation', '/LSubProfile', '/LReserveslot', '/LReservation', '/LEditReservation', '/LRemoveReservationlist', '/LsearchOtherProfile', '/LsearchEditProfile', '/LViewOtherProfile', '/LViewEditProfile', '/labtechView'], (req, res, next) => {
     if (req.session.user.role === 'student') {
         const accessControlLog = new AccessControlModel({
