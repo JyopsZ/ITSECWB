@@ -304,7 +304,7 @@ router.post('/editInfo', isAuthenticated, async (req, res) => {
         });
         await criticalLog.save();
 
-        res.redirect('/studentPage');
+        res.redirect('/login');
     } catch (err) {
         console.error('Error updating user information:', err);
         res.status(500).send('Internal Server Error');
