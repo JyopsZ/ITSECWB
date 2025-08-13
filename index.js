@@ -4,6 +4,7 @@ const multer = require('multer');
 const express = require('express')
 const bodyParser = require('body-parser')
 const session = require("express-session")
+const MemoryStore = require('memorystore')(session)
 const path = require('path')
 
 const { envPort, dbURL, sessionKey } = require("./config");
@@ -48,6 +49,10 @@ app.use(
         secret: sessionKey,
         resave: false,
         saveUninitialized: false,
+        cookie: { maxAge: 86400000 },
+        store: new MemoryStore({
+            checkPeriod: 86400000 // prune expired entries every 24h
+        }),
     })
 );
 
@@ -80,6 +85,8 @@ const moment = require('moment-timezone');
 hbs.registerHelper('formatTimestamp', function(timestamp) {
     return moment(timestamp).subtract(8, 'hours').format('YYYY-MM-DD HH:mm:ss');
 });
+
+//console.log('NODE_ENV:', process.env.NODE_ENV); // show production mode
 
 var server = app.listen(port, function() {
 	console.log("listening to port 3000...");
